@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LD48": {
+      "commandName": "Project",
+      "commandLineArgs": "--randomseed debug"
+    }
+  }
+}
