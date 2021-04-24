@@ -19,6 +19,8 @@ namespace LD48.Data
 
         public int Count => points.Length;
 
+        public Vector2 Average => (points[0] + points[Count - 1]) / 2;
+
         public static CatmullRomCurve Create(int count, Vector2 pullStart, Vector2 start, Vector2 end, Vector2 pullEnd)
         {
             var points = new Vector2[count + 1];

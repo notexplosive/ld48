@@ -23,7 +23,7 @@ namespace LD48.Components
         private readonly EyeRenderer eye;
         private readonly Player player;
         private readonly TweenChain lureTween;
-        private Vector2 rootPosition;
+        private Vector2 rootPosition => this.eye.IrisCenter;
         private BubbleSpawner bubbleSpawner;
         private float progress;
         private Phase currentPhase = Phase.Attempting;
@@ -32,7 +32,6 @@ namespace LD48.Components
         {
             this.eye = eye;
             this.player = player;
-            this.rootPosition = transform.Parent.Position - new Vector2(0, 250);
             this.bubbleSpawner = RequireComponent<BubbleSpawner>();
             var targetLocalPos = transform.LocalPosition;
             this.lureTween = new TweenChain();
@@ -126,7 +125,10 @@ namespace LD48.Components
                 circleRadius = 25;
             }
 
-            spriteBatch.DrawCircle(new CircleF(EndPos, circleRadius), 10, Color.White, lineThickness, transform.Depth);
+            if (this.currentPhase == Phase.Caught || currentPhase == Phase.Feeding)
+            {
+                spriteBatch.DrawCircle(new CircleF(EndPos, circleRadius), 10, Color.White, lineThickness, transform.Depth);
+            }
         }
     }
 }

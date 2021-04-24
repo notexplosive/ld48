@@ -27,6 +27,8 @@ namespace LD48.Components
         private Vector2 pointIlookAt;
         private bool asleep;
 
+        public Vector2 IrisCenter => (this.curves[2].Average + this.curves[3].Average) / 2 + transform.Position;
+
         private void LookAt(Transform transform)
         {
             this.lookTarget = transform;
@@ -189,6 +191,8 @@ namespace LD48.Components
             {
                 spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * Math.Max(1, -this.player.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
             }
+
+            spriteBatch.DrawCircle(new CircleF(IrisCenter, 15 * this.openPercent), 15, Color.White, lineThickness, transform.Depth);
         }
 
         private void BuildEye(float openAmount, Vector2 lookOffset)
