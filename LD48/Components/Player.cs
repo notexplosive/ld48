@@ -24,7 +24,7 @@ namespace LD48.Components
             get; private set;
         }
 
-        private readonly TweenChain playerTween;
+        private readonly TweenChain levelTransitionTween;
 
         public Vector2 CameraPos
         {
@@ -37,13 +37,13 @@ namespace LD48.Components
         public Player(Actor actor) : base(actor)
         {
             Velocity = Vector2.Zero;
-            this.playerTween = new TweenChain();
+            this.levelTransitionTween = new TweenChain();
 
-            this.playerTween.AppendWaitTween(1);
-            this.playerTween.AppendCallback(() => { this.input.downward = true; });
-            this.playerTween.AppendWaitTween(2);
-            this.playerTween.AppendCallback(() => { this.input.downward = false; });
-            this.playerTween.AppendCallback(() =>
+            this.levelTransitionTween.AppendWaitTween(1);
+            this.levelTransitionTween.AppendCallback(() => { this.input.downward = true; });
+            this.levelTransitionTween.AppendWaitTween(2);
+            this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
+            this.levelTransitionTween.AppendCallback(() =>
             {
                 StartNextLevel();
             });
@@ -51,7 +51,7 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
-            this.playerTween.Update(dt);
+            this.levelTransitionTween.Update(dt);
 
             var y = Velocity.Y;
             if (this.input.upward)
@@ -66,7 +66,20 @@ namespace LD48.Components
 
             if (this.input.None)
             {
-                y *= (1 - dt);
+                if (y > 0)
+                {
+                    y -= dt * 5;
+                }
+
+                if (y < 0)
+                {
+                    y += dt * 5;
+                }
+
+                if (Math.Abs(y) < dt * 5)
+                {
+                    y = 0;
+                }
             }
 
             Velocity = new Vector2(0, y);
@@ -78,7 +91,7 @@ namespace LD48.Components
                 this.actor.scene.camera.Position += cameraDisplacement * 0.2f;
             }
 
-            if (this.CandidateTargets.Count == 0 && this.playerTween.IsFinished)
+            if (this.CandidateTargets.Count == 0 && this.levelTransitionTween.IsFinished)
             {
                 GoDeeper(4);
             }
@@ -86,13 +99,13 @@ namespace LD48.Components
 
         public void GoDeeper(int duration)
         {
-            this.playerTween.Clear();
-            this.playerTween.AppendWaitTween(3);
-            this.playerTween.AppendCallback(() => { this.input.downward = true; });
-            this.playerTween.AppendWaitTween(duration);
-            this.playerTween.AppendCallback(() => { this.input.downward = false; });
-            this.playerTween.AppendWaitTween(duration / 2);
-            this.playerTween.AppendCallback(() =>
+            this.levelTransitionTween.Clear();
+            this.levelTransitionTween.AppendWaitTween(3);
+            this.levelTransitionTween.AppendCallback(() => { this.input.downward = true; });
+            this.levelTransitionTween.AppendWaitTween(duration);
+            this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
+            this.levelTransitionTween.AppendWaitTween(duration / 2);
+            this.levelTransitionTween.AppendCallback(() =>
             {
                 StartNextLevel();
             });
@@ -131,7 +144,7 @@ namespace LD48.Components
 
         public override void OnMouseButton(MouseButton button, Vector2 currentPosition, ButtonState state)
         {
-            if (button == MouseButton.Left)
+            if (button == MouseButton.Left && Velocity.Y == 0)
             {
                 if (state == ButtonState.Released)
                 {
