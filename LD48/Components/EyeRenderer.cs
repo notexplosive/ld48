@@ -15,9 +15,9 @@ namespace LD48.Components
     public class EyeRenderer : BaseComponent
     {
         private readonly TweenAccessors<float> openAmountAccessors;
-        private readonly TweenChain tween;
+        private readonly TweenChain eyeTween;
         private CatmullRomCurve[] curves = Array.Empty<CatmullRomCurve>();
-        private CatmullRomCurve[] wires = Array.Empty<CatmullRomCurve>();
+        private readonly CatmullRomCurve[] wires = Array.Empty<CatmullRomCurve>();
         private float openPercent;
         private Vector2 lookOffset;
         private float wireTimer = 0f;
@@ -43,16 +43,14 @@ namespace LD48.Components
             wires[3] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(-40, -200), new Vector2(-30, -120), new Vector2(-100, -96));
 
             this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
-            this.tween = new TweenChain();
-            this.tween.AppendWaitTween(1f);
-            this.tween.AppendFloatTween(1f, 2f, EaseFuncs.EaseOutBack, this.openAmountAccessors);
+            this.eyeTween = new TweenChain();
 
             this.player = RequireComponent<Player>();
         }
 
         public override void Update(float dt)
         {
-            this.tween.Update(dt);
+            this.eyeTween.Update(dt);
             BuildEye(400 * this.openPercent, this.lookOffset);
 
             if (this.lookTarget != null)
@@ -96,6 +94,10 @@ namespace LD48.Components
                 {
                     FallAsleep();
                 }
+                else
+                {
+                    WakeUp();
+                }
             }
             else
             {
@@ -122,14 +124,30 @@ namespace LD48.Components
             }
         }
 
+        public void WakeUp()
+        {
+            if (this.asleep)
+            {
+                this.asleep = false;
+                ClearTween();
+                TweenDelay(3);
+                TweenOpenAmountTo(1, 2f);
+            }
+        }
+
         public void ClearTween()
         {
-            this.tween.Clear();
+            this.eyeTween.Clear();
+        }
+
+        public void TweenDelay(float duration)
+        {
+            this.eyeTween.AppendWaitTween(duration);
         }
 
         public void TweenOpenAmountTo(float percent, float duration)
         {
-            this.tween.AppendFloatTween(percent, duration, EaseFuncs.QuadraticEaseOut, this.openAmountAccessors);
+            this.eyeTween.AppendFloatTween(percent, duration, EaseFuncs.QuadraticEaseOut, this.openAmountAccessors);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -169,7 +187,7 @@ namespace LD48.Components
             // chain
             for (int i = 0; i < 15; i++)
             {
-                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * (this.player.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
+                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * Math.Max(1, -this.player.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
             }
         }
 

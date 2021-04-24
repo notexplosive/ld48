@@ -46,7 +46,7 @@ namespace LD48.Components
                     var fish = targetActor.GetComponent<Fish>();
                     if (fish != null)
                     {
-                        if ((targetActor.transform.Position - transform.Position).Length() < 10 + fish.Size * 2)
+                        if ((targetActor.transform.Position - transform.Position).Length() < 10 + fish.HitRadius)
                         {
                             caughtFish = true;
                             fish.actor.Destroy();
@@ -82,8 +82,12 @@ namespace LD48.Components
                 }
                 else
                 {
-                    tween.AppendCallback(() => { this.currentPhase = Phase.Retracting; });
-                    tween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
+                    tween.AppendCallback(() =>
+                    {
+                        this.currentPhase = Phase.Retracting;
+                        bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0f);
+                    });
+                    tween.AppendFloatTween(0f, 0.5f, EaseFuncs.QuadraticEaseOut, accessors);
                 }
             });
 

@@ -12,44 +12,52 @@ namespace LD48.Components
 {
     class Fish : BaseComponent
     {
-        private float intertia = 5;
         private float bubbleSpawnTimer;
 
-        public float Size
-        {
-            get; private set;
-        }
+        public float Size => this.stats.SizeLevel * 5;
+
+        private readonly Transform targetTransform;
+        private Vector2 targetOffset;
+        private float targetResetTimer;
 
         public Vector2 Velocity
         {
             get; private set;
         } = Vector2.Zero;
-        public Nullable<Vector2> TargetPosition
-        {
-            get; set;
-        }
 
         private readonly BubbleSpawner bubbleSpawner;
+        public readonly FishStats stats;
 
-        public Fish(Actor actor, int sizeLevel) : base(actor)
+        public Fish(Actor actor, Transform targetTransform, FishStats stats) : base(actor)
         {
-            Size = sizeLevel * 5;
-            TargetPosition = null;
+            this.targetTransform = targetTransform;
+            this.targetOffset = CalculateTargetOffset();
             this.bubbleSpawner = RequireComponent<BubbleSpawner>();
+            this.stats = stats;
+        }
+
+        private Vector2 CalculateTargetOffset()
+        {
+            var viewportHeight = this.actor.scene.camera.ViewportHeight / 2;
+            return new Vector2(MachinaGame.Random.CleanRandom.Next(-viewportHeight, viewportHeight), MachinaGame.Random.CleanRandom.Next(-viewportHeight, viewportHeight));
+
         }
 
         public override void DebugDraw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawCircle(new CircleF(transform.Position, Size * 2), 5, Color.Red, 1, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(transform.Position, HitRadius), 5, Color.Red, 1, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(this.targetTransform.Position + this.targetOffset, 5), 5, Color.Red, 1, transform.Depth);
         }
+
+        public float HitRadius => Size * 2 + Velocity.Length() * 2;
 
         public override void Update(float dt)
         {
             var velocityOffset = Vector2.Zero;
 
-            if (TargetPosition.HasValue)
+            if (this.targetTransform != null)
             {
-                var direction = (TargetPosition.Value - transform.Position);
+                var direction = (targetTransform.Position + this.targetOffset - transform.Position);
                 direction.Normalize();
                 velocityOffset += direction * dt * 60;
             }
@@ -57,12 +65,20 @@ namespace LD48.Components
 
             if (velocityOffset.LengthSquared() > 0)
             {
-                Velocity += velocityOffset * dt * this.intertia;
+                Velocity += velocityOffset * dt * this.stats.Inertia * MachinaGame.Random.CleanRandom.Next(3);
             }
 
-            if (Velocity.Length() < 1 && this.bubbleSpawnTimer < 0)
+            if (MachinaGame.Random.CleanRandom.NextDouble() < 0.1 && this.targetResetTimer < 0)
             {
-                this.bubbleSpawnTimer = 2;
+                this.targetOffset = CalculateTargetOffset();
+                this.targetResetTimer = MachinaGame.Random.CleanRandom.Next(4, 12);
+            }
+
+            this.targetResetTimer -= dt;
+
+            if (this.bubbleSpawnTimer < 0 && MachinaGame.Random.DirtyRandom.NextDouble() < 0.15)
+            {
+                this.bubbleSpawnTimer = (int) (MachinaGame.Random.DirtyRandom.NextDouble() * 5);
                 for (int i = 0; i < 5; i++)
                 {
                     this.bubbleSpawner.SpawnBubble(transform.Position, -Velocity / 5, i / 20f);
@@ -70,10 +86,69 @@ namespace LD48.Components
             }
             this.bubbleSpawnTimer -= dt;
 
+            var length = Velocity.Length();
+            if (length > this.stats.TerminalSpeed)
+            {
+                var normalVel = Velocity;
+                normalVel.Normalize();
+                Velocity = normalVel * this.stats.TerminalSpeed;
+            }
+
             if (Velocity.LengthSquared() > 0)
             {
-                transform.Position += Velocity;
+                transform.Position += Velocity * dt * 60;
             }
+        }
+
+        public override void OnKey(Keys key, ButtonState state, ModifierKeys modifiers)
+        {
+            if (MachinaGame.DebugLevel >= DebugLevel.Passive)
+            {
+                if (key == Keys.K && modifiers.Control)
+                {
+                    this.actor.Destroy();
+                }
+            }
+        }
+
+        public class FishStats
+        {
+            public float Inertia;
+            public float TerminalSpeed;
+            public float SizeLevel;
+            public int Count;
+
+            public static FishStats[] Levels = new FishStats[]
+            {
+                new FishStats
+                {
+                    Inertia = 2,
+                    TerminalSpeed = 2,
+                    SizeLevel = 5,
+                    Count = 1,
+                },
+                new FishStats
+                {
+                    Inertia = 5,
+                    TerminalSpeed = 10,
+                    SizeLevel = 8,
+                    Count = 3,
+                },
+                new FishStats
+                {
+                    Inertia = 30,
+                    TerminalSpeed = 12,
+                    SizeLevel = 2,
+                    Count = 4,
+                },
+                new FishStats
+                {
+                    Inertia = 30,
+                    TerminalSpeed = 13,
+                    SizeLevel = 3,
+                    Count = 15,
+                }
+            };
         }
     }
 }

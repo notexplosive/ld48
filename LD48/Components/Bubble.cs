@@ -19,7 +19,7 @@ namespace LD48.Components
         public Bubble(Actor actor, int size, Vector2 startingVelocity, float delay) : base(actor)
         {
             this.delay = delay;
-            this.size = 0.01f;
+            this.size = 1f;
             this.maxSize = size;
             this.velocity = startingVelocity * MachinaGame.Random.DirtyRandom.Next(10) / 10;
         }
@@ -37,7 +37,7 @@ namespace LD48.Components
                 }
 
                 this.velocity.Y -= dt * 5;
-                transform.Position += this.velocity;
+                transform.Position += this.velocity * dt * 60;
             }
         }
 

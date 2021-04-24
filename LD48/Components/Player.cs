@@ -1,4 +1,5 @@
 ﻿using Machina.Components;
+using Machina.Data;
 using Machina.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +14,7 @@ namespace LD48.Components
     {
         public Input input;
         private Actor lure;
+        private int level = 0;
 
         public readonly List<Transform> CandidateTargets = new List<Transform>();
 
@@ -21,6 +23,8 @@ namespace LD48.Components
         {
             get; private set;
         }
+
+        private readonly TweenChain playerTween;
 
         public Vector2 CameraPos
         {
@@ -33,19 +37,31 @@ namespace LD48.Components
         public Player(Actor actor) : base(actor)
         {
             Velocity = Vector2.Zero;
+            this.playerTween = new TweenChain();
+
+            this.playerTween.AppendWaitTween(1);
+            this.playerTween.AppendCallback(() => { this.input.downward = true; });
+            this.playerTween.AppendWaitTween(2);
+            this.playerTween.AppendCallback(() => { this.input.downward = false; });
+            this.playerTween.AppendCallback(() =>
+            {
+                StartNextLevel();
+            });
         }
 
         public override void Update(float dt)
         {
+            this.playerTween.Update(dt);
+
             var y = Velocity.Y;
             if (this.input.upward)
             {
-                y += dt * 5;
+                y -= dt * 5;
             }
 
             if (this.input.downward)
             {
-                y -= dt * 5;
+                y += dt * 5;
             }
 
             if (this.input.None)
@@ -54,24 +70,57 @@ namespace LD48.Components
             }
 
             Velocity = new Vector2(0, y);
-            transform.Position += Velocity;
+            transform.Position += Velocity * dt * 60;
 
             var cameraDisplacement = transform.Position - this.actor.scene.camera.Position - this.actor.scene.camera.ViewportCenter;
-            this.actor.scene.camera.Position += cameraDisplacement * 0.2f;
+            if (cameraDisplacement.Y > 0)
+            {
+                this.actor.scene.camera.Position += cameraDisplacement * 0.2f;
+            }
+
+            if (this.CandidateTargets.Count == 0 && this.playerTween.IsFinished)
+            {
+                GoDeeper(4);
+            }
         }
 
-
-        public override void OnKey(Keys key, ButtonState state, ModifierKeys modifiers)
+        public void GoDeeper(int duration)
         {
-            if (key == Keys.Down && modifiers.None)
+            this.playerTween.Clear();
+            this.playerTween.AppendWaitTween(3);
+            this.playerTween.AppendCallback(() => { this.input.downward = true; });
+            this.playerTween.AppendWaitTween(duration);
+            this.playerTween.AppendCallback(() => { this.input.downward = false; });
+            this.playerTween.AppendWaitTween(duration / 2);
+            this.playerTween.AppendCallback(() =>
             {
-                this.input.upward = state == ButtonState.Pressed;
+                StartNextLevel();
+            });
+        }
+
+        public void StartNextLevel()
+        {
+            var stats = Fish.FishStats.Levels[this.level];
+            MachinaGame.Print("Starting level", this.level, Fish.FishStats.Levels.Length);
+
+            if (Fish.FishStats.Levels.Length > this.level)
+            {
+                for (int i = 0; i < stats.Count; i++)
+                {
+                    var camWidth = this.actor.scene.camera.ViewportWidth;
+                    float randomX = MachinaGame.Random.CleanRandom.Next(camWidth / 2, camWidth) * ((MachinaGame.Random.CleanRandom.NextDouble() < 0.5) ? -1f : 1f);
+                    var fishPos = new Vector2(randomX, this.actor.scene.camera.ViewportHeight / 2);
+
+                    Game1.SpawnNewFish(
+                        this.actor.scene, transform.Position + fishPos, this, stats);
+                }
+            }
+            else
+            {
+                MachinaGame.Print("Finished!");
             }
 
-            if (key == Keys.Up && modifiers.None)
-            {
-                this.input.downward = state == ButtonState.Pressed;
-            }
+            this.level++;
         }
 
         public void ResetLure()
@@ -86,6 +135,12 @@ namespace LD48.Components
                 if (state == ButtonState.Released)
                 {
                     SpawnLure(currentPosition);
+                    this.actor.scene.TimeScale = 1;
+                }
+
+                if (state == ButtonState.Pressed)
+                {
+                    this.actor.scene.TimeScale = 0.25f;
                 }
             }
         }

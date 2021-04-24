@@ -4,6 +4,7 @@ using Machina.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace LD48
 {
@@ -23,7 +24,7 @@ namespace LD48
             var bgActor = bgScene.AddActor("Background");
             new BackgroundRenderer(bgActor, gameScene.camera);
 
-            var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, 256));
+            var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, -256));
             var player = new Player(eye);
             var eyeRenderer = new EyeRenderer(eye);
 
@@ -34,11 +35,6 @@ namespace LD48
             });
 
 
-            var fishActor = CreateFish(gameScene, new Vector2(300, 300), 5, player);
-            CreateFish(gameScene, new Vector2(300, 300), 5, player);
-            CreateFish(gameScene, new Vector2(300, 300), 5, player);
-            CreateFish(gameScene, new Vector2(300, 300), 5, player);
-
 
             if (DebugLevel >= DebugLevel.Passive)
             {
@@ -47,19 +43,14 @@ namespace LD48
             }
         }
 
-        private Actor CreateFish(Scene gameScene, Vector2 pos, int size, Player player)
+        internal static void SpawnNewFish(Scene gameScene, Vector2 position, Player player, Fish.FishStats stats)
         {
-            var fishActor = gameScene.AddActor("Fish");
+            var fishActor = gameScene.AddActor("Fish", position);
             new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));
             new TimeAccumulator(fishActor);
-            var fish = new Fish(fishActor, size);
+            var fish = new Fish(fishActor, player.transform, stats);
             new FishRenderer(fishActor);
             new PlayerTarget(fishActor, player);
-            fishActor.transform.Position = pos;
-
-            fish.TargetPosition = new Vector2(MachinaGame.Random.CleanRandom.Next(gameScene.camera.ViewportWidth), MachinaGame.Random.CleanRandom.Next(gameScene.camera.ViewportHeight));
-            MachinaGame.Print(fish.TargetPosition);
-            return fishActor;
         }
     }
 }
