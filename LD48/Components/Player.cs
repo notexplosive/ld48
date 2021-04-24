@@ -100,11 +100,12 @@ namespace LD48.Components
 
         public void StartNextLevel()
         {
-            var stats = Fish.FishStats.Levels[this.level];
             MachinaGame.Print("Starting level", this.level, Fish.FishStats.Levels.Length);
 
             if (Fish.FishStats.Levels.Length > this.level)
             {
+                var stats = Fish.FishStats.Levels[this.level];
+
                 for (int i = 0; i < stats.Count; i++)
                 {
                     var camWidth = this.actor.scene.camera.ViewportWidth;
@@ -114,13 +115,13 @@ namespace LD48.Components
                     Game1.SpawnNewFish(
                         this.actor.scene, transform.Position + fishPos, this, stats);
                 }
+                this.level++;
             }
             else
             {
                 MachinaGame.Print("Finished!");
             }
 
-            this.level++;
         }
 
         public void ResetLure()

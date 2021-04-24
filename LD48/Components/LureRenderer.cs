@@ -22,7 +22,7 @@ namespace LD48.Components
     {
         private readonly EyeRenderer eye;
         private readonly Player player;
-        private readonly TweenChain tween;
+        private readonly TweenChain lureTween;
         private Vector2 rootPosition;
         private BubbleSpawner bubbleSpawner;
         private float progress;
@@ -35,10 +35,10 @@ namespace LD48.Components
             this.rootPosition = transform.Parent.Position - new Vector2(0, 250);
             this.bubbleSpawner = RequireComponent<BubbleSpawner>();
             var targetLocalPos = transform.LocalPosition;
-            this.tween = new TweenChain();
+            this.lureTween = new TweenChain();
             var accessors = new TweenAccessors<float>(() => this.progress, val => this.progress = val);
-            tween.AppendFloatTween(1f, 0.5f, EaseFuncs.QuadraticEaseOut, accessors);
-            tween.AppendCallback(() =>
+            lureTween.AppendFloatTween(1f, 0.25f, EaseFuncs.QuadraticEaseOut, accessors);
+            lureTween.AppendCallback(() =>
             {
                 var caughtFish = false;
                 foreach (var targetActor in actor.scene.GetAllActors())
@@ -62,32 +62,34 @@ namespace LD48.Components
                     bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.4f);
 
                     this.currentPhase = Phase.Caught;
-                    tween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
-                    tween.AppendCallback(() =>
+                    lureTween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
+                    lureTween.AppendCallback(() =>
                     {
                         this.currentPhase = Phase.Feeding;
                         transform.LocalPosition = new Vector2(0, 0);
                     });
-                    tween.AppendFloatTween(1f, 0.25f, EaseFuncs.QuadraticEaseOut, accessors);
-                    tween.AppendWaitTween(0.25f);
-                    tween.AppendCallback(() =>
+                    lureTween.AppendFloatTween(1f, 0.25f, EaseFuncs.QuadraticEaseOut, accessors);
+                    lureTween.AppendWaitTween(0.25f);
+                    lureTween.AppendCallback(() =>
                     {
                         this.currentPhase = Phase.Retracting;
                         this.eye.ClearTween();
-                        this.eye.TweenOpenAmountTo(0f, 0.25f);
+                        this.eye.TweenOpenAmountTo(2f, 0.1f);
+                        this.eye.TweenOpenAmountTo(0f, 0.15f);
+                        this.eye.TweenOpenAmountTo(0f, 0.2f); // Stay closed
                         this.eye.TweenOpenAmountTo(1f, 0.5f);
                     });
-                    tween.AppendWaitTween(0.5f);
-                    tween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
+                    lureTween.AppendWaitTween(0.5f);
+                    lureTween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
                 }
                 else
                 {
-                    tween.AppendCallback(() =>
+                    lureTween.AppendCallback(() =>
                     {
                         this.currentPhase = Phase.Retracting;
                         bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0f);
                     });
-                    tween.AppendFloatTween(0f, 0.5f, EaseFuncs.QuadraticEaseOut, accessors);
+                    lureTween.AppendFloatTween(0f, 0.5f, EaseFuncs.QuadraticEaseOut, accessors);
                 }
             });
 
@@ -96,13 +98,13 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
-            this.tween.Update(dt);
+            this.lureTween.Update(dt);
             if (this.currentPhase == Phase.Caught && MachinaGame.Random.DirtyRandom.NextDouble() < 0.1f)
             {
                 this.bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.1f);
             }
 
-            if (this.tween.IsFinished)
+            if (this.lureTween.IsFinished)
             {
                 this.actor.Destroy();
                 this.player.ResetLure();
@@ -115,16 +117,16 @@ namespace LD48.Components
         public override void Draw(SpriteBatch spriteBatch)
         {
             var lineThickness = 3f;
-            spriteBatch.DrawLine(EndPos, this.rootPosition, Color.White, lineThickness, transform.Depth);
+            spriteBatch.DrawLine(EndPos, this.rootPosition, Color.Yellow, lineThickness, transform.Depth);
 
             int circleRadius = 10;
 
             if (this.currentPhase == Phase.Caught || currentPhase == Phase.Feeding)
             {
-                circleRadius = 50;
+                circleRadius = 25;
             }
 
-            spriteBatch.DrawCircle(new CircleF(EndPos, circleRadius), 6, Color.White, lineThickness, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(EndPos, circleRadius), 10, Color.White, lineThickness, transform.Depth);
         }
     }
 }
