@@ -9,9 +9,14 @@ using System.Text;
 
 namespace LD48.Components
 {
-    class Player : BaseComponent
+    public class Player : BaseComponent
     {
         public Input input;
+        private Actor lure;
+
+        public readonly List<Transform> CandidateTargets = new List<Transform>();
+
+
         public Vector2 Velocity
         {
             get; private set;
@@ -21,6 +26,9 @@ namespace LD48.Components
         {
             get; private set;
         }
+        public bool IsLureDeployed => this.lure != null;
+
+        public Transform LureEnd => this.lure.transform;
 
         public Player(Actor actor) : base(actor)
         {
@@ -32,12 +40,12 @@ namespace LD48.Components
             var y = Velocity.Y;
             if (this.input.upward)
             {
-                y += dt;
+                y += dt * 5;
             }
 
             if (this.input.downward)
             {
-                y -= dt;
+                y -= dt * 5;
             }
 
             if (this.input.None)
@@ -63,6 +71,33 @@ namespace LD48.Components
             if (key == Keys.Up && modifiers.None)
             {
                 this.input.downward = state == ButtonState.Pressed;
+            }
+        }
+
+        public void ResetLure()
+        {
+            this.lure = null;
+        }
+
+        public override void OnMouseButton(MouseButton button, Vector2 currentPosition, ButtonState state)
+        {
+            if (button == MouseButton.Left)
+            {
+                if (state == ButtonState.Released)
+                {
+                    SpawnLure(currentPosition);
+                }
+            }
+        }
+
+        private void SpawnLure(Vector2 targetPosition)
+        {
+            if (this.lure == null)
+            {
+                this.lure = this.actor.transform.AddActorAsChild("Lure");
+                this.lure.transform.Position = targetPosition;
+                new BubbleSpawner(this.lure, new Machina.Data.MinMax<int>(14, 24));
+                new LureRenderer(this.lure, this, this.actor.GetComponent<EyeRenderer>());
             }
         }
 

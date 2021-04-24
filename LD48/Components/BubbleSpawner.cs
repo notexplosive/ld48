@@ -2,6 +2,7 @@
 using Machina.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,30 +13,19 @@ namespace LD48.Components
     class BubbleSpawner : BaseComponent
     {
         public MinMax<int> bubbleSize;
-        private float timer;
 
         public BubbleSpawner(Actor actor, MinMax<int> bubbleSize) : base(actor)
         {
             this.bubbleSize = bubbleSize;
-            this.timer = 0;
         }
 
-        public override void Update(float dt)
-        {
-            if (MachinaGame.Random.DirtyRandom.NextDouble() < 0.1 && this.timer < 0)
-            {
-                SpawnBubble();
-            }
-            this.timer -= dt;
-        }
-
-        public void SpawnBubble()
+        public void SpawnBubble(Vector2 pos, Vector2 startingVel, float delay)
         {
             var bubble = this.actor.scene.AddActor("bubble");
-            new Bubble(bubble, MachinaGame.Random.DirtyRandom.Next(this.bubbleSize.min, this.bubbleSize.max));
+            new Bubble(bubble, MachinaGame.Random.DirtyRandom.Next(this.bubbleSize.min, this.bubbleSize.max), startingVel, delay);
             new DestroyTimer(bubble, 5);
-            bubble.transform.Position = this.actor.transform.Position;
-            this.timer = 1f;
+            MachinaGame.Random.DirtyRandom.NextUnitVector(out Vector2 offset);
+            bubble.transform.Position = pos + offset * MachinaGame.Random.DirtyRandom.Next(5);
         }
     }
 }

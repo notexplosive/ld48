@@ -12,9 +12,9 @@ using System.Text;
 
 namespace LD48.Components
 {
-    class EyeRenderer : BaseComponent
+    public class EyeRenderer : BaseComponent
     {
-        private readonly TweenAccessors<float> currentHeightAccessors;
+        private readonly TweenAccessors<float> openAmountAccessors;
         private readonly TweenChain tween;
         private CatmullRomCurve[] curves = Array.Empty<CatmullRomCurve>();
         private CatmullRomCurve[] wires = Array.Empty<CatmullRomCurve>();
@@ -23,22 +23,29 @@ namespace LD48.Components
         private float wireTimer = 0f;
         private CatmullRomCurve currentWire;
         private Player player;
+        private Transform lookTarget;
+        private Vector2 pointIlookAt;
+        private bool asleep;
+
+        private void LookAt(Transform transform)
+        {
+            this.lookTarget = transform;
+        }
 
         public EyeRenderer(Actor actor) : base(actor)
         {
             BuildEye(20, Vector2.Zero);
 
             wires = new CatmullRomCurve[6];
-            wires[0] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -141), new Vector2(-25, -200), new Vector2(-69, -100), new Vector2(100, -96));
-            wires[1] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -141), new Vector2(40, -200), new Vector2(60, -110), new Vector2(-100, -96));
-            wires[2] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -141), new Vector2(20, -200), new Vector2(30, -115), new Vector2(-100, -96));
-            wires[3] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -141), new Vector2(-13, -200), new Vector2(-30, -120), new Vector2(-100, -96));
+            wires[0] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(-40, -200), new Vector2(-69, -100), new Vector2(100, -96));
+            wires[1] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(40, -200), new Vector2(60, -110), new Vector2(-100, -96));
+            wires[2] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(40, -200), new Vector2(30, -115), new Vector2(-100, -96));
+            wires[3] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(-40, -200), new Vector2(-30, -120), new Vector2(-100, -96));
 
-
-            this.currentHeightAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
+            this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
             this.tween = new TweenChain();
             this.tween.AppendWaitTween(1f);
-            this.tween.AppendFloatTween(1f, 2f, EaseFuncs.EaseOutBack, this.currentHeightAccessors);
+            this.tween.AppendFloatTween(1f, 2f, EaseFuncs.EaseOutBack, this.openAmountAccessors);
 
             this.player = RequireComponent<Player>();
         }
@@ -48,13 +55,81 @@ namespace LD48.Components
             this.tween.Update(dt);
             BuildEye(400 * this.openPercent, this.lookOffset);
 
+            if (this.lookTarget != null)
+            {
+                var lookTargetPosition = this.lookTarget.Position - transform.Position;
+                var disp = (lookTargetPosition - this.pointIlookAt);
+                this.pointIlookAt += disp * dt * 15;
+                pointIlookAt.X = Math.Clamp(pointIlookAt.X, -this.actor.scene.camera.ViewportWidth / 4, this.actor.scene.camera.ViewportWidth / 4) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
+                pointIlookAt.Y = Math.Clamp(pointIlookAt.Y, -this.actor.scene.camera.ViewportHeight / 2, this.actor.scene.camera.ViewportHeight / 2) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
+                this.lookOffset = new Vector2(pointIlookAt.X / this.actor.scene.camera.ViewportWidth / 2, pointIlookAt.Y / this.actor.scene.camera.ViewportHeight / 4);
+            }
+
             this.wireTimer += dt * 5;
 
             if (this.wireTimer > 1)
             {
                 this.wireTimer = 0;
                 this.currentWire = this.wires[MachinaGame.Random.DirtyRandom.Next(this.wires.Length)];
+
+                if (MachinaGame.Random.DirtyRandom.NextDouble() < 0.05)
+                {
+                    Blink();
+                }
             }
+
+            if (!this.player.IsLureDeployed)
+            {
+                var minLength = float.MaxValue;
+                foreach (var target in this.player.CandidateTargets)
+                {
+                    var disp = transform.Position - target.Position;
+                    var length = disp.LengthSquared();
+                    if (length < minLength)
+                    {
+                        minLength = length;
+                        LookAt(target);
+                    }
+                }
+
+                if (this.player.CandidateTargets.Count == 0)
+                {
+                    FallAsleep();
+                }
+            }
+            else
+            {
+                LookAt(this.player.LureEnd);
+            }
+        }
+
+        public void Blink()
+        {
+            if (!this.asleep && !this.player.IsLureDeployed)
+            {
+                TweenOpenAmountTo(0f, 0.25f);
+                TweenOpenAmountTo(1f, 0.25f);
+            }
+        }
+
+        public void FallAsleep()
+        {
+            if (!this.asleep)
+            {
+                this.asleep = true;
+                ClearTween();
+                TweenOpenAmountTo(0f, 2f);
+            }
+        }
+
+        public void ClearTween()
+        {
+            this.tween.Clear();
+        }
+
+        public void TweenOpenAmountTo(float percent, float duration)
+        {
+            this.tween.AppendFloatTween(percent, duration, EaseFuncs.QuadraticEaseOut, this.openAmountAccessors);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -96,12 +171,6 @@ namespace LD48.Components
             {
                 spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * (this.player.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
             }
-        }
-
-        public override void OnMouseUpdate(Vector2 currentPosition, Vector2 positionDelta, Vector2 rawDelta)
-        {
-            var displacement = currentPosition - transform.Position;
-            this.lookOffset = new Vector2(displacement.X / this.actor.scene.camera.ViewportWidth / 2, displacement.Y / this.actor.scene.camera.ViewportHeight / 4);
         }
 
         private void BuildEye(float openAmount, Vector2 lookOffset)

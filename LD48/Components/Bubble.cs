@@ -11,33 +11,43 @@ namespace LD48.Components
 {
     class Bubble : BaseComponent
     {
+        private float delay;
         private float size;
         private float maxSize;
-        private float velocity;
+        private Vector2 velocity;
 
-        public Bubble(Actor actor, int size) : base(actor)
+        public Bubble(Actor actor, int size, Vector2 startingVelocity, float delay) : base(actor)
         {
+            this.delay = delay;
             this.size = 0.01f;
             this.maxSize = size;
-            this.velocity = 0;
+            this.velocity = startingVelocity * MachinaGame.Random.DirtyRandom.Next(10) / 10;
         }
 
         public override void Update(float dt)
         {
-            this.size = size *= 2;
-            if (this.size > this.maxSize)
-            {
-                this.size = maxSize;
-            }
+            this.delay -= dt;
 
-            this.velocity += dt;
-            transform.Position += new Vector2(0, -velocity);
+            if (delay < 0)
+            {
+                this.size = size *= 2;
+                if (this.size > this.maxSize)
+                {
+                    this.size = maxSize;
+                }
+
+                this.velocity.Y -= dt * 5;
+                transform.Position += this.velocity;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            var lineThickness = 3;
-            spriteBatch.DrawCircle(new CircleF(transform.Position, this.size), 15, Color.White, lineThickness, transform.Depth);
+            if (delay < 0)
+            {
+                var lineThickness = 3;
+                spriteBatch.DrawCircle(new CircleF(transform.Position, this.size), 15, Color.White, lineThickness, transform.Depth);
+            }
         }
     }
 }

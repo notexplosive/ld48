@@ -24,8 +24,8 @@ namespace LD48
             new BackgroundRenderer(bgActor, gameScene.camera);
 
             var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, 256));
-            new Player(eye);
-            new EyeRenderer(eye);
+            var player = new Player(eye);
+            var eyeRenderer = new EyeRenderer(eye);
 
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {
@@ -34,7 +34,11 @@ namespace LD48
             });
 
 
-            CreateFish(gameScene, new Vector2(300, 300), 5);
+            var fishActor = CreateFish(gameScene, new Vector2(300, 300), 5, player);
+            CreateFish(gameScene, new Vector2(300, 300), 5, player);
+            CreateFish(gameScene, new Vector2(300, 300), 5, player);
+            CreateFish(gameScene, new Vector2(300, 300), 5, player);
+
 
             if (DebugLevel >= DebugLevel.Passive)
             {
@@ -43,17 +47,19 @@ namespace LD48
             }
         }
 
-        private void CreateFish(Scene gameScene, Vector2 pos, int size)
+        private Actor CreateFish(Scene gameScene, Vector2 pos, int size, Player player)
         {
             var fishActor = gameScene.AddActor("Fish");
+            new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));
             new TimeAccumulator(fishActor);
             var fish = new Fish(fishActor, size);
             new FishRenderer(fishActor);
-            new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));
+            new PlayerTarget(fishActor, player);
             fishActor.transform.Position = pos;
 
             fish.TargetPosition = new Vector2(MachinaGame.Random.CleanRandom.Next(gameScene.camera.ViewportWidth), MachinaGame.Random.CleanRandom.Next(gameScene.camera.ViewportHeight));
-
+            MachinaGame.Print(fish.TargetPosition);
+            return fishActor;
         }
     }
 }
