@@ -18,7 +18,7 @@ namespace LD48.Components
         private readonly TweenChain eyeTween;
         private readonly Player player;
         private readonly CatmullRomCurve[] wires = Array.Empty<CatmullRomCurve>();
-        private CatmullRomCurve[] curves = Array.Empty<CatmullRomCurve>();
+        private CatmullRomCurve[] eyeCurves = Array.Empty<CatmullRomCurve>();
         private float openPercent;
         private Vector2 lookOffset;
         private float wireTimer = 0f;
@@ -27,7 +27,7 @@ namespace LD48.Components
         private Vector2 pointIlookAt;
         private float aimTimer;
 
-        public Vector2 IrisCenter => (this.curves[2].Average + this.curves[3].Average) / 2 + transform.Position;
+        public Vector2 IrisCenter => (this.eyeCurves[2].Average + this.eyeCurves[3].Average) / 2 + transform.Position + new Vector2(this.lookOffset.X * 50, 0);
 
         private void LookAt(Vector2 target)
         {
@@ -43,7 +43,7 @@ namespace LD48.Components
             this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
             this.eyeTween = new TweenChain();
 
-            BuildEye(20, Vector2.Zero);
+            BuildEye(20);
 
             wires = new CatmullRomCurve[6];
             wires[0] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(-40, -200), new Vector2(-69, -100), new Vector2(100, -96));
@@ -65,7 +65,7 @@ namespace LD48.Components
             this.aimTimer = Math.Clamp(this.aimTimer, 0, 1);
 
             this.eyeTween.Update(dt);
-            BuildEye(400 * this.openPercent, this.lookOffset);
+            BuildEye(400 * this.openPercent);
 
             if (this.lookTarget.HasValue)
             {
@@ -73,8 +73,8 @@ namespace LD48.Components
                 var disp = (lookTargetPosition - this.pointIlookAt);
                 this.pointIlookAt += disp * dt * 15;
                 pointIlookAt.X = Math.Clamp(pointIlookAt.X, -this.actor.scene.camera.ViewportWidth / 4, this.actor.scene.camera.ViewportWidth / 4) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
-                pointIlookAt.Y = Math.Clamp(pointIlookAt.Y, -this.actor.scene.camera.ViewportHeight / 2, this.actor.scene.camera.ViewportHeight / 2) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
-                this.lookOffset = new Vector2(pointIlookAt.X / this.actor.scene.camera.ViewportWidth / 2, pointIlookAt.Y / this.actor.scene.camera.ViewportHeight / 4);
+                pointIlookAt.Y = Math.Clamp(pointIlookAt.Y, -this.actor.scene.camera.ViewportHeight / 4, this.actor.scene.camera.ViewportHeight / 2) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
+                this.lookOffset = new Vector2(pointIlookAt.X / this.actor.scene.camera.ViewportWidth / 2, pointIlookAt.Y / this.actor.scene.camera.ViewportHeight / 2);
             }
 
             this.wireTimer += dt * 5;
@@ -165,9 +165,9 @@ namespace LD48.Components
         public override void Draw(SpriteBatch spriteBatch)
         {
             var lineThickness = 3f;
-            foreach (var curve in this.curves)
+            foreach (var curve in this.eyeCurves)
             {
-                curve?.Draw(spriteBatch, transform.Position, transform.Depth, lineThickness);
+                curve?.Draw(spriteBatch, transform.Position + new Vector2(this.lookOffset.X * 50, 0), transform.Depth, lineThickness);
             }
 
             foreach (var curve in this.wires)
@@ -181,14 +181,16 @@ namespace LD48.Components
 
                     if (curve == this.currentWire)
                     {
-                        spriteBatch.DrawCircle(new CircleF(curve.GetPointAt(this.wireTimer) + transform.Position, 5), 3, Color.White, lineThickness, transform.Depth);
+                        // Electrical impulse
+                        spriteBatch.DrawCircle(new CircleF(curve.GetPointAt(this.wireTimer) + transform.Position, 7), 3, Color.Yellow, lineThickness, transform.Depth - 1);
                     }
                 }
             }
 
             spriteBatch.DrawRectangle(new Rectangle(transform.Position.ToPoint() + new Point(-50, -300), new Point(100, 100)), Color.White, lineThickness, transform.Depth);
 
-            spriteBatch.DrawCircle(new CircleF(transform.Position, 150), 32, Color.White, lineThickness, transform.Depth);
+            // Main body circle
+            spriteBatch.DrawCircle(new CircleF(transform.Position, 150), MachinaGame.Random.DirtyRandom.Next(25, 35), Color.White, lineThickness, transform.Depth);
 
             // coil attached to eye
             for (int i = 0; i < 5; i++)
@@ -205,7 +207,7 @@ namespace LD48.Components
             spriteBatch.DrawCircle(new CircleF(IrisCenter, 10 * this.openPercent + 10 * EaseFuncs.CubicEaseOut(this.aimTimer) * this.openPercent), 15, Color.White, lineThickness, transform.Depth);
         }
 
-        private void BuildEye(float openAmount, Vector2 lookOffset)
+        private void BuildEye(float openAmount)
         {
             var count = 32;
             var left = new Vector2(-100, 0);
@@ -245,7 +247,7 @@ namespace LD48.Components
             curves[2] = BuildIrisSegment(Math.Clamp(progressForIris + lookOffset.X, 0.2f, 0.8f), right * pullFactor);
             curves[3] = BuildIrisSegment(Math.Clamp(1 - progressForIris + lookOffset.X, 0.2f, 0.8f), left * pullFactor);
 
-            this.curves = curves;
+            this.eyeCurves = curves;
         }
     }
 }
