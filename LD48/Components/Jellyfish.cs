@@ -20,7 +20,8 @@ namespace LD48.Components
 
         private void RunAwayAndDie()
         {
-            this.actor.Destroy();
+            this.fish.SetTargetOffset(new Vector2(5000, 0));
+            new DestroyTimer(this.actor, 5);
         }
 
         public override void Update(float dt)

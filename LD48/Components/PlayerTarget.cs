@@ -8,9 +8,12 @@ using System.Text;
 
 namespace LD48.Components
 {
+    /// <summary>
+    /// Thing the eye looks at, if there are none of these left then the level ends
+    /// </summary>
     class PlayerTarget : BaseComponent
     {
-        private Player player;
+        private readonly Player player;
 
         public PlayerTarget(Actor actor, Player player) : base(actor)
         {
