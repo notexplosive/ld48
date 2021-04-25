@@ -10,7 +10,7 @@ namespace LD48.Components
 {
     class Seaweed : BaseComponent
     {
-        public readonly int length;
+        public readonly float length;
         private readonly float swayFactor;
         private float baseAngle;
         public Node[] nodes;
@@ -21,18 +21,17 @@ namespace LD48.Components
         public Vector2 NormalizedEnd => new Vector2(MathF.Cos(transform.Angle), MathF.Sin(transform.Angle));
         private float Sway => MathF.Sin(this.time) * swayFactor;
 
-        public Seaweed(Actor actor) : base(actor)
+        public Seaweed(Actor actor, float length, int numberOfNodes, float swayFactorCoef) : base(actor)
         {
-            this.length = 400;
-            this.swayFactor = 1 / 5f;
-            var numberOfNodes = 10;
+            this.length = length;
+            this.swayFactor = 1f / swayFactorCoef;
             this.baseAngle = transform.Angle;
 
             this.nodes = new Node[numberOfNodes];
             for (int i = 0; i < numberOfNodes; i++)
             {
                 var sign = i % 2 == 0 ? -1 : 1;
-                this.nodes[i] = new Node(this, (this.length / numberOfNodes * i), 40, MathF.PI / 3 * sign);
+                this.nodes[i] = new Node(this, (this.length / (numberOfNodes - 1) * i), 40, MathF.PI / 3 * sign);
             }
         }
 

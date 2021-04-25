@@ -81,7 +81,7 @@ namespace LD48.Components
                 this.bubbleSpawnTimer = (int) (MachinaGame.Random.DirtyRandom.NextDouble() * 5);
                 for (int i = 0; i < 5; i++)
                 {
-                    this.bubbleSpawner.SpawnBubble(transform.Position, -Velocity / 5, i / 20f);
+                    this.bubbleSpawner.SpawnBubble(transform.Position, Velocity, i / 20f);
                 }
             }
             this.bubbleSpawnTimer -= dt;
