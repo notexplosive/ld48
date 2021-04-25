@@ -16,26 +16,32 @@ namespace LD48.Components
     {
         private readonly TweenAccessors<float> openAmountAccessors;
         private readonly TweenChain eyeTween;
-        private CatmullRomCurve[] curves = Array.Empty<CatmullRomCurve>();
+        private readonly Player player;
         private readonly CatmullRomCurve[] wires = Array.Empty<CatmullRomCurve>();
+        private CatmullRomCurve[] curves = Array.Empty<CatmullRomCurve>();
         private float openPercent;
         private Vector2 lookOffset;
         private float wireTimer = 0f;
         private CatmullRomCurve currentWire;
-        private Player player;
-        private Transform lookTarget;
+        private Vector2 lookTarget;
         private Vector2 pointIlookAt;
-        private bool asleep;
 
         public Vector2 IrisCenter => (this.curves[2].Average + this.curves[3].Average) / 2 + transform.Position;
 
-        private void LookAt(Transform transform)
+        private void LookAt(Vector2 target)
         {
-            this.lookTarget = transform;
+            this.lookTarget = target;
         }
 
         public EyeRenderer(Actor actor) : base(actor)
         {
+            this.player = RequireComponent<Player>();
+            this.player.onWakeUp += WakeUp;
+            this.player.onFallAsleep += FallAsleep;
+
+            this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
+            this.eyeTween = new TweenChain();
+
             BuildEye(20, Vector2.Zero);
 
             wires = new CatmullRomCurve[6];
@@ -43,11 +49,6 @@ namespace LD48.Components
             wires[1] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(40, -200), new Vector2(60, -110), new Vector2(-100, -96));
             wires[2] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(40, -200), new Vector2(30, -115), new Vector2(-100, -96));
             wires[3] = CatmullRomCurve.Create(25, new Vector2(MachinaGame.Random.DirtyRandom.Next(-100, 100) + 100, -140), new Vector2(-40, -200), new Vector2(-30, -120), new Vector2(-100, -96));
-
-            this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
-            this.eyeTween = new TweenChain();
-
-            this.player = RequireComponent<Player>();
         }
 
         public override void Update(float dt)
@@ -57,7 +58,7 @@ namespace LD48.Components
 
             if (this.lookTarget != null)
             {
-                var lookTargetPosition = this.lookTarget.Position - transform.Position;
+                var lookTargetPosition = this.lookTarget - transform.Position;
                 var disp = (lookTargetPosition - this.pointIlookAt);
                 this.pointIlookAt += disp * dt * 15;
                 pointIlookAt.X = Math.Clamp(pointIlookAt.X, -this.actor.scene.camera.ViewportWidth / 4, this.actor.scene.camera.ViewportWidth / 4) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
@@ -78,38 +79,37 @@ namespace LD48.Components
                 }
             }
 
-            if (!this.player.IsLureDeployed)
+            if (this.player.IsPlayingButIdle)
             {
                 var minLength = float.MaxValue;
-                foreach (var target in this.player.CandidateTargets)
+                foreach (var targetTransform in this.player.CandidateTargets)
                 {
-                    var disp = transform.Position - target.Position;
+                    var disp = transform.Position - targetTransform.Position;
                     var length = disp.LengthSquared();
                     if (length < minLength)
                     {
                         minLength = length;
-                        LookAt(target);
+                        LookAt(targetTransform.Position);
                     }
-                }
-
-                if (this.player.CandidateTargets.Count == 0)
-                {
-                    FallAsleep();
-                }
-                else
-                {
-                    WakeUp();
                 }
             }
             else
             {
-                LookAt(this.player.LureEnd);
+                if (this.player.IsLureDeployed)
+                {
+                    LookAt(this.player.LureEnd);
+                }
+
+                if (this.player.IsAiming)
+                {
+                    LookAt(this.player.MousePos);
+                }
             }
         }
 
         public void Blink()
         {
-            if (!this.asleep && !this.player.IsLureDeployed)
+            if (this.player.IsPlayingButIdle)
             {
                 TweenOpenAmountTo(0f, 0.25f);
                 TweenOpenAmountTo(1f, 0.25f);
@@ -118,23 +118,20 @@ namespace LD48.Components
 
         public void FallAsleep()
         {
-            if (!this.asleep)
-            {
-                this.asleep = true;
-                ClearTween();
-                TweenOpenAmountTo(0f, 2f);
-            }
+            this.player.Asleep = true;
+            ClearTween();
+            TweenOpenAmountTo(0f, 2f);
         }
 
         public void WakeUp()
         {
-            if (this.asleep)
+            ClearTween();
+            TweenDelay(3);
+            TweenOpenAmountTo(1, 2f);
+            this.eyeTween.AppendCallback(() =>
             {
-                this.asleep = false;
-                ClearTween();
-                TweenDelay(3);
-                TweenOpenAmountTo(1, 2f);
-            }
+                this.player.Asleep = false;
+            });
         }
 
         public void ClearTween()

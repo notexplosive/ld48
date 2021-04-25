@@ -15,9 +15,21 @@ namespace LD48.Components
         public Input input;
         private Actor lure;
         private int level = 0;
+        public bool IsAiming
+        {
+            get; private set;
+        }
 
+        public Vector2 MousePos
+        {
+            get; private set;
+        }
         public readonly List<Transform> CandidateTargets = new List<Transform>();
 
+        public bool Asleep
+        {
+            get; set;
+        } = true;
 
         public Vector2 Velocity
         {
@@ -32,27 +44,73 @@ namespace LD48.Components
         }
         public bool IsLureDeployed => this.lure != null;
 
-        public Transform LureEnd => this.lure.transform;
+        public Vector2 LureEnd => this.lure.transform.Position;
+
+        public bool IsPlayingButIdle => !IsLureDeployed && !IsAiming && !Asleep;
+
+        public bool IsInLevelTransition => !this.levelTransitionTween.IsFinished || Asleep;
+        public Action onWakeUp;
+        public Action onFallAsleep;
 
         public Player(Actor actor) : base(actor)
         {
             Velocity = Vector2.Zero;
             this.levelTransitionTween = new TweenChain();
 
+            // Intro
             this.levelTransitionTween.AppendWaitTween(1);
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = true; });
             this.levelTransitionTween.AppendWaitTween(2);
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
             this.levelTransitionTween.AppendCallback(() =>
             {
+                WakeUp();
                 StartNextLevel();
             });
+        }
+
+        private void WakeUp()
+        {
+            //Asleep = false;
+            this.onWakeUp?.Invoke();
+        }
+
+        private void FallAsleep()
+        {
+            //Asleep = true;
+            this.onFallAsleep?.Invoke();
         }
 
         public override void Update(float dt)
         {
             this.levelTransitionTween.Update(dt);
 
+            ProcessInput(dt);
+            transform.Position += Velocity * dt * 60;
+
+            if (IsAiming)
+            {
+                this.actor.scene.TimeScale = 0.25f;
+            }
+            else
+            {
+                this.actor.scene.TimeScale = 1f;
+            }
+
+            var cameraDisplacement = transform.Position - this.actor.scene.camera.Position - this.actor.scene.camera.ViewportCenter;
+            if (cameraDisplacement.Y > 0)
+            {
+                this.actor.scene.camera.Position += cameraDisplacement * 0.2f;
+            }
+
+            if (this.CandidateTargets.Count == 0 && !IsInLevelTransition && IsPlayingButIdle)
+            {
+                AdvanceToNextLevel(4);
+            }
+        }
+
+        private void ProcessInput(float dt)
+        {
             var y = Velocity.Y;
             if (this.input.upward)
             {
@@ -83,23 +141,17 @@ namespace LD48.Components
             }
 
             Velocity = new Vector2(0, y);
-            transform.Position += Velocity * dt * 60;
-
-            var cameraDisplacement = transform.Position - this.actor.scene.camera.Position - this.actor.scene.camera.ViewportCenter;
-            if (cameraDisplacement.Y > 0)
-            {
-                this.actor.scene.camera.Position += cameraDisplacement * 0.2f;
-            }
-
-            if (this.CandidateTargets.Count == 0 && this.levelTransitionTween.IsFinished)
-            {
-                GoDeeper(4);
-            }
         }
 
-        public void GoDeeper(int duration)
+        public override void OnMouseUpdate(Vector2 currentPosition, Vector2 positionDelta, Vector2 rawDelta)
+        {
+            MousePos = currentPosition;
+        }
+
+        public void AdvanceToNextLevel(int duration)
         {
             this.levelTransitionTween.Clear();
+            this.levelTransitionTween.AppendCallback(() => { FallAsleep(); });
             this.levelTransitionTween.AppendWaitTween(3);
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = true; });
             this.levelTransitionTween.AppendWaitTween(duration);
@@ -108,6 +160,7 @@ namespace LD48.Components
             this.levelTransitionTween.AppendCallback(() =>
             {
                 StartNextLevel();
+                WakeUp();
             });
         }
 
@@ -144,17 +197,17 @@ namespace LD48.Components
 
         public override void OnMouseButton(MouseButton button, Vector2 currentPosition, ButtonState state)
         {
-            if (button == MouseButton.Left && Velocity.Y == 0)
+            if (button == MouseButton.Left && !IsInLevelTransition && !IsLureDeployed)
             {
-                if (state == ButtonState.Released)
+                if (state == ButtonState.Released && IsAiming)
                 {
                     SpawnLure(currentPosition);
-                    this.actor.scene.TimeScale = 1;
+                    IsAiming = false;
                 }
 
                 if (state == ButtonState.Pressed)
                 {
-                    this.actor.scene.TimeScale = 0.25f;
+                    IsAiming = true;
                 }
             }
         }
