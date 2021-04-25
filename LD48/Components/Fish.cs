@@ -49,7 +49,7 @@ namespace LD48.Components
             spriteBatch.DrawCircle(new CircleF(this.targetTransform.Position + this.targetOffset, 5), 5, Color.Red, 1, transform.Depth);
         }
 
-        public float HitRadius => Size * 2 + Velocity.Length() * 2;
+        public float HitRadius => Size * 2 + Velocity.Length() * 2.5f;
 
         public override void Update(float dt)
         {
