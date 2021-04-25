@@ -46,15 +46,31 @@ namespace LD48.Components
 
                 foreach (var targetActor in actor.scene.GetAllActors())
                 {
-                    var eatable = targetActor.GetComponent<Eatable>();
-                    if (eatable != null)
+                    var jellyfish = targetActor.GetComponent<Jellyfish>();
+                    if (jellyfish != null)
                     {
-                        if ((targetActor.transform.Position - transform.Position).Length() < this.lureSize + eatable.fish.HitRadius)
+                        if (jellyfish.IsHit(transform.Position, lureSize))
                         {
-                            caughtFish = true;
-                            this.caughtFishSize = eatable.fish.Size;
-                            eatable.actor.Destroy();
-                            break;
+                            this.wasStunned = true;
+                            jellyfish.Hit();
+                        }
+                    }
+                }
+
+                if (!wasStunned)
+                {
+                    foreach (var targetActor in actor.scene.GetAllActors())
+                    {
+                        var eatable = targetActor.GetComponent<Eatable>();
+                        if (eatable != null)
+                        {
+                            if ((targetActor.transform.Position - transform.Position).Length() < this.lureSize + eatable.fish.HitRadius)
+                            {
+                                caughtFish = true;
+                                this.caughtFishSize = eatable.fish.Size;
+                                eatable.actor.Destroy();
+                                break;
+                            }
                         }
                     }
                 }
@@ -72,16 +88,6 @@ namespace LD48.Components
                             {
                                 this.wasStunned = true;
                                 plant.Hit();
-                            }
-                        }
-
-                        var jellyfish = targetActor.GetComponent<Jellyfish>();
-                        if (jellyfish != null)
-                        {
-                            if (jellyfish.IsHit(transform.Position, lureSize))
-                            {
-                                this.wasStunned = true;
-                                jellyfish.Hit();
                             }
                         }
                     }
