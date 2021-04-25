@@ -11,7 +11,7 @@ namespace LD48.Data
         public float SizeLevel;
         public float LingerTime = 5;
 
-        public static FishStats basic = new FishStats
+        public static FishStats extremelyEasy = new FishStats
         {
             Mass = 2,
             TerminalSpeed = 2,
@@ -26,11 +26,19 @@ namespace LD48.Data
             SizeLevel = 10
         };
 
-        public static FishStats chonkers = new FishStats
+        public static FishStats easyChonkers = new FishStats
         {
             Mass = 15,
             TerminalSpeed = 10,
             SizeLevel = 8,
+        };
+
+        public static FishStats fastChonkers = new FishStats
+        {
+            Mass = 100,
+            TerminalSpeed = 30,
+            SizeLevel = 10,
+            LingerTime = 1
         };
 
         public static FishStats tiny = new FishStats
@@ -38,6 +46,22 @@ namespace LD48.Data
             Mass = 30,
             TerminalSpeed = 12,
             SizeLevel = 2,
+        };
+
+        public static FishStats tinyErratic = new FishStats
+        {
+            Mass = 100,
+            TerminalSpeed = 12,
+            SizeLevel = 4,
+            LingerTime = 0.5f
+        };
+
+        public static FishStats tinyPlayful = new FishStats
+        {
+            Mass = 100,
+            TerminalSpeed = 12,
+            SizeLevel = 4,
+            LingerTime = 3f
         };
 
         public static FishStats medium = new FishStats

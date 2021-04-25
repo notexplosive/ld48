@@ -14,16 +14,55 @@ namespace LD48.Data
 
         public static Level[] All = new Level[]
         {
+
             new Level
             {
-                FishCount = 1,
-                FishStats = FishStats.basic,
-                JellyfishCount = 3
+                // Smallfish -> Easy
+                FishCount = 8,
+                FishStats = FishStats.tinyPlayful,
             },
 
             new Level
             {
-                // Pretty good introduction to Seaweed mechanic
+                // Smallfish -> Medium
+                FishCount = 3,
+                FishStats = FishStats.tinyErratic,
+            },
+
+            new Level
+            {
+                // Seaweed -> Medium
+                FishCount = 3,
+                FishStats = FishStats.fastChonkers,
+                Seaweed = SeaweedInfo.forest
+            },
+
+            new Level
+            {
+                // Seaweed -> Medium 2
+                FishCount = 3,
+                FishStats = FishStats.easyChonkers,
+                Seaweed = SeaweedInfo.sidesVeryHard
+            },
+
+            new Level
+            {
+                // Seaweed -> Introduce
+                FishCount = 5,
+                FishStats = FishStats.medium,
+                Seaweed = SeaweedInfo.sidesHard
+            },
+
+            new Level
+            {
+                // First level
+                FishCount = 3,
+                FishStats = FishStats.extremelyEasy,
+            },
+
+            new Level
+            {
+                // Seaweed -> Hard
                 FishCount = 2,
                 FishStats = FishStats.tiny,
                 Seaweed = SeaweedInfo.forest
@@ -31,8 +70,16 @@ namespace LD48.Data
 
             new Level
             {
+                // Lots of jellyfish, finding the fish is challenging but otherwise easy
+                FishCount = 5,
+                FishStats = FishStats.extremelyEasy,
+                JellyfishCount = 15
+            },
+
+            new Level
+            {
                 FishCount = 3,
-                FishStats = FishStats.chonkers
+                FishStats = FishStats.easyChonkers
             },
 
             new Level

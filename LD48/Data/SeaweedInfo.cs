@@ -19,7 +19,16 @@ namespace LD48.Data
         public static SeaweedInfo[] sidesMedium =
             new SeaweedInfo[] { new SeaweedInfo { XPercent = -0.1f, Angle = MathF.PI / 8, NodeCount = 15 }, new SeaweedInfo { XPercent = 1.1f, Angle = -MathF.PI / 8, NodeCount = 15 } };
         public static SeaweedInfo[] sidesHard =
-            new SeaweedInfo[] { new SeaweedInfo { XPercent = -0.1f, Angle = MathF.PI / 4, NodeCount = 15 }, new SeaweedInfo { XPercent = 1.1f, Angle = -MathF.PI / 4, NodeCount = 15 } };
+            new SeaweedInfo[] { new SeaweedInfo { XPercent = -0.1f, Angle = MathF.PI / 4, NodeCount = 20 }, new SeaweedInfo { XPercent = 1.1f, Angle = -MathF.PI / 4, NodeCount = 20 } };
+        public static SeaweedInfo[] sidesVeryHard =
+            new SeaweedInfo[] {
+                new SeaweedInfo { XPercent = -0.1f, Angle = MathF.PI / 4, NodeCount = 20 },
+                new SeaweedInfo { XPercent = 1.1f, Angle = -MathF.PI / 4, NodeCount = 20 },
+
+                new SeaweedInfo { XPercent = 0.5f, Angle = -MathF.PI / 4, NodeCount = 15 },
+                new SeaweedInfo { XPercent = 0.5f, Angle = MathF.PI / 4, NodeCount = 15 }
+            };
+
         public static SeaweedInfo[] forest =
             new SeaweedInfo[] {
                 new SeaweedInfo { XPercent = 0.15f, Angle = 0, NodeCount = 15 },

@@ -51,7 +51,7 @@ namespace LD48.Components
                 {
                     this.strands[i].Cycle(FolliclePos(i));
                 }
-                this.hairTimer = 0.1f;
+                this.hairTimer = 0.05f;
             }
             this.hairTimer -= dt;
         }

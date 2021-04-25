@@ -24,7 +24,7 @@ namespace LD48.Components
             if (this.targetResetTimer < 0)
             {
                 this.fish.SetRandomTargetOffset();
-                this.targetResetTimer = this.fish.stats.LingerTime * MachinaGame.Random.CleanRandom.NextSingle(0.9f, 1.1f);
+                this.targetResetTimer = this.fish.stats.LingerTime * MachinaGame.Random.CleanRandom.NextSingle(0.5f, 1.5f);
             }
             this.targetResetTimer -= dt;
         }

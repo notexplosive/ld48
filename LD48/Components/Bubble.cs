@@ -13,8 +13,9 @@ namespace LD48.Components
     {
         private float delay;
         private float size;
-        private float maxSize;
         private Vector2 velocity;
+        private readonly float maxSize;
+        private readonly int circleCount;
 
         public Bubble(Actor actor, int size, Vector2 startingVelocity, float delay) : base(actor)
         {
@@ -22,6 +23,8 @@ namespace LD48.Components
             this.size = 1f;
             this.maxSize = size;
             this.velocity = startingVelocity * MachinaGame.Random.DirtyRandom.Next(10) / 10;
+            var circleCount = MachinaGame.Random.DirtyRandom.Next(1, 10) - 7;
+            this.circleCount = Math.Clamp(circleCount, 1, 3);
         }
 
         public override void Update(float dt)
@@ -39,6 +42,8 @@ namespace LD48.Components
                 this.velocity.Y -= dt * 5;
                 transform.Position += this.velocity * dt * 60;
             }
+
+            this.transform.Angle += dt * 4;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -46,7 +51,15 @@ namespace LD48.Components
             if (delay < 0)
             {
                 var lineThickness = 3;
-                spriteBatch.DrawCircle(new CircleF(transform.Position, this.size), 15, Color.White, lineThickness, transform.Depth);
+                for (int i = 0; i < this.circleCount; i++)
+                {
+                    var pos = Vector2.Zero;
+                    if (i > 0)
+                    {
+                        pos = new Vector2(MathF.Sin(transform.Angle), MathF.Cos(transform.Angle)) * this.size * 2;
+                    }
+                    spriteBatch.DrawCircle(new CircleF(pos + transform.Position, this.size), 15, Color.White, lineThickness, transform.Depth);
+                }
             }
         }
     }

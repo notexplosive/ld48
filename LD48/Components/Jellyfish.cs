@@ -30,7 +30,7 @@ namespace LD48.Components
         private void RunAwayAndDie()
         {
             this.fish.SetTargetOffset(new Vector2(5000, 0));
-            new DestroyTimer(this.actor, 5);
+            new DestroyTimer(this.actor, 10);
         }
 
         public void Hit()
