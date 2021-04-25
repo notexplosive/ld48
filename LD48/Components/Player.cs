@@ -1,4 +1,5 @@
-﻿using Machina.Components;
+﻿using LD48.Data;
+using Machina.Components;
 using Machina.Data;
 using Machina.Engine;
 using Microsoft.Xna.Framework;
@@ -168,20 +169,21 @@ namespace LD48.Components
 
         public void StartNextLevel()
         {
-            MachinaGame.Print("Starting level", this.level, Fish.FishStats.Levels.Length);
+            var levels = Level.Array;
+            MachinaGame.Print("Starting level", this.level, levels.Length);
 
-            if (Fish.FishStats.Levels.Length > this.level)
+            if (levels.Length > this.level)
             {
-                var stats = Fish.FishStats.Levels[this.level];
+                var level = levels[this.level];
 
-                for (int i = 0; i < stats.Count; i++)
+                for (int i = 0; i < level.FishCount; i++)
                 {
                     var camWidth = this.actor.scene.camera.ViewportWidth;
                     float randomX = MachinaGame.Random.CleanRandom.Next(camWidth / 2, camWidth) * ((MachinaGame.Random.CleanRandom.NextDouble() < 0.5) ? -1f : 1f);
                     var fishPos = new Vector2(randomX, this.actor.scene.camera.ViewportHeight / 2);
 
                     Game1.SpawnNewFish(
-                        this.actor.scene, transform.Position + fishPos, this, stats);
+                        this.actor.scene, transform.Position + fishPos, this, level.FishStats);
                 }
                 this.level++;
             }

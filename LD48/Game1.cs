@@ -1,4 +1,5 @@
 ﻿using LD48.Components;
+using LD48.Data;
 using Machina.Components;
 using Machina.Engine;
 using Microsoft.Xna.Framework;
@@ -51,7 +52,7 @@ namespace LD48
             }
         }
 
-        internal static void SpawnNewFish(Scene gameScene, Vector2 position, Player player, Fish.FishStats stats)
+        internal static void SpawnNewFish(Scene gameScene, Vector2 position, Player player, FishStats stats)
         {
             var fishActor = gameScene.AddActor("Fish", position);
             new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));

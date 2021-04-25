@@ -1,4 +1,5 @@
-﻿using Machina.Components;
+﻿using LD48.Data;
+using Machina.Components;
 using Machina.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -109,46 +110,6 @@ namespace LD48.Components
                     this.actor.Destroy();
                 }
             }
-        }
-
-        public class FishStats
-        {
-            public float Inertia;
-            public float TerminalSpeed;
-            public float SizeLevel;
-            public int Count;
-
-            public static FishStats[] Levels = new FishStats[]
-            {
-                new FishStats
-                {
-                    Inertia = 2,
-                    TerminalSpeed = 2,
-                    SizeLevel = 5,
-                    Count = 1,
-                },
-                new FishStats
-                {
-                    Inertia = 5,
-                    TerminalSpeed = 10,
-                    SizeLevel = 8,
-                    Count = 3,
-                },
-                new FishStats
-                {
-                    Inertia = 30,
-                    TerminalSpeed = 12,
-                    SizeLevel = 2,
-                    Count = 4,
-                },
-                new FishStats
-                {
-                    Inertia = 30,
-                    TerminalSpeed = 13,
-                    SizeLevel = 3,
-                    Count = 15,
-                }
-            };
         }
     }
 }
