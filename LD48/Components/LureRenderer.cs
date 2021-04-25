@@ -67,7 +67,6 @@ namespace LD48.Components
                         this.currentPhase = Phase.Feeding;
                         transform.LocalPosition = new Vector2(0, 0);
                     });
-                    lureTween.AppendFloatTween(1f, 0.25f, EaseFuncs.QuadraticEaseOut, accessors);
                     lureTween.AppendWaitTween(0.25f);
                     lureTween.AppendCallback(() =>
                     {

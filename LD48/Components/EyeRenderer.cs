@@ -23,7 +23,7 @@ namespace LD48.Components
         private Vector2 lookOffset;
         private float wireTimer = 0f;
         private CatmullRomCurve currentWire;
-        private Vector2 lookTarget;
+        private Vector2? lookTarget;
         private Vector2 pointIlookAt;
         private float aimTimer;
 
@@ -67,9 +67,9 @@ namespace LD48.Components
             this.eyeTween.Update(dt);
             BuildEye(400 * this.openPercent, this.lookOffset);
 
-            if (this.lookTarget != null)
+            if (this.lookTarget.HasValue)
             {
-                var lookTargetPosition = this.lookTarget - transform.Position;
+                var lookTargetPosition = this.lookTarget.Value - transform.Position;
                 var disp = (lookTargetPosition - this.pointIlookAt);
                 this.pointIlookAt += disp * dt * 15;
                 pointIlookAt.X = Math.Clamp(pointIlookAt.X, -this.actor.scene.camera.ViewportWidth / 4, this.actor.scene.camera.ViewportWidth / 4) + MachinaGame.Random.DirtyRandom.Next(-5, 5);
@@ -111,7 +111,7 @@ namespace LD48.Components
                     LookAt(this.player.LureEnd);
                 }
 
-                if (this.player.IsAiming && !this.player.IsLureDeployed)
+                if (this.player.IsAiming && this.player.IsAllowedToDeploy)
                 {
                     LookAt(this.player.MousePos);
                 }
@@ -130,12 +130,14 @@ namespace LD48.Components
         public void FallAsleep()
         {
             this.player.Asleep = true;
+            this.lookTarget = null;
             ClearTween();
             TweenOpenAmountTo(0f, 2f);
         }
 
         public void WakeUp()
         {
+            this.lookTarget = null;
             ClearTween();
             TweenDelay(3);
             TweenOpenAmountTo(1, 2f);

@@ -48,7 +48,7 @@ namespace LD48.Components
 
         public Vector2 LureEnd => this.lure.transform.Position;
 
-        public bool IsPlayingButIdle => !IsLureDeployed && !IsAiming && !Asleep;
+        public bool IsPlayingButIdle => !IsAiming && IsAllowedToDeploy;
 
         public bool IsInLevelTransition => !this.levelTransitionTween.IsFinished || Asleep;
         public Action onWakeUp;
@@ -203,7 +203,7 @@ namespace LD48.Components
             {
                 if (state == ButtonState.Released && IsAiming)
                 {
-                    if (!IsInLevelTransition)
+                    if (IsAllowedToDeploy)
                     {
                         SpawnLure(currentPosition);
                     }
