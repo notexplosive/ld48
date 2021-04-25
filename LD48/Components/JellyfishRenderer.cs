@@ -48,7 +48,7 @@ namespace LD48.Components
         public override void Draw(SpriteBatch spriteBatch)
         {
             var lineThickness = 3;
-            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), 10, Color.White, lineThickness, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), 20, Color.White, lineThickness, transform.Depth);
 
             for (int i = 0; i < follicleCount; i++)
             {
