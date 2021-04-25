@@ -37,7 +37,7 @@ namespace LD48.Components
             var angularVel = ((this.fish.Velocity.ToAngle() + MathF.PI / 2) - transform.Angle) / 40;
             transform.Angle += angularVel;
 
-            if (Math.Abs(angularVel) > 0.05f)
+            if (Math.Abs(angularVel) > 0.06f)
             {
                 for (int i = 0; i < follicleCount; i++)
                 {

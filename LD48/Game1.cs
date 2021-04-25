@@ -40,7 +40,7 @@ namespace LD48
             new Fish(jellyFishActor, player.transform, FishStats.jellyfish);
             new Jellyfish(jellyFishActor, player);
             new JellyfishRenderer(jellyFishActor);
-
+            new NewTargetOffsetWhenReachesCurrent(jellyFishActor);
 
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {

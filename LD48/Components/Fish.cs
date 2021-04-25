@@ -15,6 +15,7 @@ namespace LD48.Components
     {
         private readonly Transform playerTransform;
         private Vector2 targetOffset;
+        public Vector2 TargetPosition => this.playerTransform.Position + this.targetOffset;
         public float Size => this.stats.SizeLevel * 5;
         public Vector2 Velocity
         {
@@ -45,7 +46,7 @@ namespace LD48.Components
         public override void DebugDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawCircle(new CircleF(transform.Position, HitRadius), 5, Color.Red, 1, transform.Depth);
-            spriteBatch.DrawCircle(new CircleF(this.playerTransform.Position + this.targetOffset, 5), 5, Color.Red, 1, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(TargetPosition, 5), 5, Color.Red, 1, transform.Depth);
         }
 
         public float HitRadius => Size * 2 + Velocity.Length() * 2.5f;
