@@ -25,6 +25,7 @@ namespace LD48.Components
         private CatmullRomCurve currentWire;
         private Vector2 lookTarget;
         private Vector2 pointIlookAt;
+        private float aimTimer;
 
         public Vector2 IrisCenter => (this.curves[2].Average + this.curves[3].Average) / 2 + transform.Position;
 
@@ -53,6 +54,16 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
+            if (this.player.IsAiming)
+            {
+                this.aimTimer += dt * 4;
+            }
+            else
+            {
+                this.aimTimer -= dt * 4;
+            }
+            this.aimTimer = Math.Clamp(this.aimTimer, 0, 1);
+
             this.eyeTween.Update(dt);
             BuildEye(400 * this.openPercent, this.lookOffset);
 
@@ -189,7 +200,7 @@ namespace LD48.Components
                 spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * Math.Max(1, -this.player.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
             }
 
-            spriteBatch.DrawCircle(new CircleF(IrisCenter, 15 * this.openPercent), 15, Color.White, lineThickness, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(IrisCenter, 10 * this.openPercent + 10 * EaseFuncs.CubicEaseOut(this.aimTimer) * this.openPercent), 15, Color.White, lineThickness, transform.Depth);
         }
 
         private void BuildEye(float openAmount, Vector2 lookOffset)
@@ -227,9 +238,10 @@ namespace LD48.Components
                     pull);
             }
 
-            var progressForIris = 0.4f;
-            curves[2] = BuildIrisSegment(Math.Clamp(progressForIris + lookOffset.X, 0.2f, 0.8f), right);
-            curves[3] = BuildIrisSegment(Math.Clamp(1 - progressForIris + lookOffset.X, 0.2f, 0.8f), left);
+            var progressForIris = 0.4f * (this.aimTimer / 20 + 1);
+            var pullFactor = (1 + this.aimTimer);
+            curves[2] = BuildIrisSegment(Math.Clamp(progressForIris + lookOffset.X, 0.2f, 0.8f), right * pullFactor);
+            curves[3] = BuildIrisSegment(Math.Clamp(1 - progressForIris + lookOffset.X, 0.2f, 0.8f), left * pullFactor);
 
             this.curves = curves;
         }
