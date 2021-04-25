@@ -59,7 +59,7 @@ namespace LD48.Components
         private Vector2 FolliclePos(int i)
         {
             var aof = MathF.PI / this.follicleCount * i - MathF.PI / 2;
-            return transform.Position + new Vector2(MathF.Cos(transform.Angle + aof), MathF.Sin(transform.Angle + aof)) * this.fish.Size;
+            return transform.Position + new Vector2(MathF.Cos(transform.Angle + aof), MathF.Sin(transform.Angle + aof)) * (this.fish.Size - MachinaGame.Random.DirtyRandom.Next(0, (int) this.fish.Size / 4));
         }
 
         private class HairStrand
@@ -85,11 +85,13 @@ namespace LD48.Components
             {
                 var prevNode = folliclePos;
                 var i = 0;
+                var rand = MachinaGame.Random.DirtyRandom;
                 foreach (var node in this.list)
                 {
                     var opacity = 1 - (float) i / this.listLength;
-                    spriteBatch.DrawLine(node, prevNode, new Color(opacity, opacity, opacity), lineThickness, depth);
-                    prevNode = node;
+                    var drawNode = node + new Vector2(rand.Next(-5, 5), rand.Next(-5, 5));
+                    spriteBatch.DrawLine(drawNode, prevNode, new Color(opacity, opacity, opacity), lineThickness, depth);
+                    prevNode = drawNode;
                     i++;
                 }
             }
