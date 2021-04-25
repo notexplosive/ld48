@@ -60,7 +60,8 @@ namespace LD48.Components
         {
             foreach (var node in nodes)
             {
-                if ((position - node.CenterPos).LengthSquared() < node.radius * node.radius + cursorRadius * cursorRadius)
+                var f = node.radius + cursorRadius;
+                if ((position - node.CenterPos).LengthSquared() < f * f)
                 {
                     return node;
                 }

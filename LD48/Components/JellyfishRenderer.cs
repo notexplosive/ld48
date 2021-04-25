@@ -58,12 +58,18 @@ namespace LD48.Components
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            var color = Color.White;
             var lineThickness = 3;
-            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), 20, Color.White, lineThickness, transform.Depth);
+
+            if (this.jellyfish.HitTimer > 0)
+            {
+                color = Color.HotPink;
+            }
+            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), 20, color, lineThickness, transform.Depth);
 
             for (int i = 0; i < follicleCount; i++)
             {
-                this.strands[i].Draw(spriteBatch, FolliclePos(i), lineThickness, transform.Depth);
+                this.strands[i].Draw(spriteBatch, FolliclePos(i), lineThickness, transform.Depth, color);
             }
         }
 
@@ -92,7 +98,7 @@ namespace LD48.Components
                 this.list.RemoveLast();
             }
 
-            public void Draw(SpriteBatch spriteBatch, Vector2 folliclePos, float lineThickness, Depth depth)
+            public void Draw(SpriteBatch spriteBatch, Vector2 folliclePos, float lineThickness, Depth depth, Color color)
             {
                 var prevNode = folliclePos;
                 var i = 0;
@@ -101,7 +107,7 @@ namespace LD48.Components
                 {
                     var opacity = 1 - (float) i / this.listLength;
                     var drawNode = node + new Vector2(rand.Next(-5, 5), rand.Next(-5, 5));
-                    spriteBatch.DrawLine(drawNode, prevNode, new Color(opacity, opacity, opacity), lineThickness, depth);
+                    spriteBatch.DrawLine(drawNode, prevNode, color * opacity, lineThickness, depth);
                     prevNode = drawNode;
                     i++;
                 }

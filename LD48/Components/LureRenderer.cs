@@ -28,7 +28,7 @@ namespace LD48.Components
         private float progress;
         private Phase currentPhase = Phase.Attempting;
         private float caughtFishSize;
-        private bool hitPlant;
+        private bool wasStunned;
         private readonly float lureSize = 10;
 
         public LureRenderer(Actor actor, Player player, EyeRenderer eye) : base(actor)
@@ -57,16 +57,32 @@ namespace LD48.Components
                             break;
                         }
                     }
+                }
 
-                    var plant = targetActor.GetComponent<Seaweed>();
-
-                    if (!caughtFish && plant != null)
+                if (!caughtFish)
+                {
+                    foreach (var targetActor in actor.scene.GetAllActors())
                     {
-                        var node = plant.NodeAt(transform.Position, this.lureSize);
-                        if (node != null)
+                        var plant = targetActor.GetComponent<Seaweed>();
+
+                        if (plant != null)
                         {
-                            this.hitPlant = true;
-                            plant.Hit();
+                            var node = plant.NodeAt(transform.Position, this.lureSize);
+                            if (node != null)
+                            {
+                                this.wasStunned = true;
+                                plant.Hit();
+                            }
+                        }
+
+                        var jellyfish = targetActor.GetComponent<Jellyfish>();
+                        if (jellyfish != null)
+                        {
+                            if (jellyfish.IsHit(transform.Position, lureSize))
+                            {
+                                this.wasStunned = true;
+                                jellyfish.Hit();
+                            }
                         }
                     }
                 }
@@ -119,7 +135,7 @@ namespace LD48.Components
                     });
 
                     var retractDuration = 0.5f;
-                    if (this.hitPlant)
+                    if (this.wasStunned)
                     {
                         retractDuration = 2.5f;
                     }
@@ -155,7 +171,7 @@ namespace LD48.Components
             var color = Color.Yellow;
 
 
-            if (this.hitPlant)
+            if (this.wasStunned)
             {
                 color = Color.HotPink;
             }
