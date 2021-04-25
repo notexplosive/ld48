@@ -17,20 +17,27 @@ namespace LD48.Data
             {
                 FishCount = 1,
                 FishStats = FishStats.basic,
-                Seaweed = SeaweedInfo.sidesHard
+            },
+
+            new Level
+            {
+                // Pretty good introduction to Seaweed mechanic
+                FishCount = 2,
+                FishStats = FishStats.tiny,
+                Seaweed = SeaweedInfo.forest
             },
 
             new Level
             {
                 FishCount = 3,
                 FishStats = FishStats.chonkers
-    },
+            },
 
             new Level
             {
                 FishCount = 5,
                 FishStats = FishStats.tiny
-},
+            },
 
             // Late hard level
             new Level
