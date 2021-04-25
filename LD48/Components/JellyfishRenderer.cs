@@ -14,6 +14,7 @@ namespace LD48.Components
     {
         private Jellyfish jellyfish;
         private Fish fish;
+        private BubbleSpawner bubbleSpawner;
         private HairStrand[] strands;
         private int follicleCount = 5;
         private float hairTimer;
@@ -22,6 +23,7 @@ namespace LD48.Components
         {
             this.jellyfish = RequireComponent<Jellyfish>();
             this.fish = RequireComponent<Fish>();
+            this.bubbleSpawner = RequireComponent<BubbleSpawner>();
 
             this.strands = new HairStrand[this.follicleCount];
             for (int i = 0; i < this.follicleCount; i++)
@@ -32,7 +34,16 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
-            transform.Angle = this.fish.Velocity.ToAngle() + MathF.PI / 2;
+            var angularVel = ((this.fish.Velocity.ToAngle() + MathF.PI / 2) - transform.Angle) / 40;
+            transform.Angle += angularVel;
+
+            if (Math.Abs(angularVel) > 0.05f)
+            {
+                for (int i = 0; i < follicleCount; i++)
+                {
+                    this.bubbleSpawner.SpawnBubble(FolliclePos(i), this.fish.Velocity, 0f);
+                }
+            }
 
             if (this.hairTimer < 0)
             {

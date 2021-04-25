@@ -13,35 +13,33 @@ namespace LD48.Components
 {
     class Fish : BaseComponent
     {
-        private float bubbleSpawnTimer;
-
-        public float Size => this.stats.SizeLevel * 5;
-
         private readonly Transform playerTransform;
         private Vector2 targetOffset;
-        private float targetResetTimer;
-
+        public float Size => this.stats.SizeLevel * 5;
         public Vector2 Velocity
         {
             get; private set;
         } = Vector2.Zero;
 
-        private readonly BubbleSpawner bubbleSpawner;
         public readonly FishStats stats;
 
         public Fish(Actor actor, Transform playerTransform, FishStats stats) : base(actor)
         {
             this.playerTransform = playerTransform;
-            this.targetOffset = CalculateTargetOffset();
-            this.bubbleSpawner = RequireComponent<BubbleSpawner>();
+            SetRandomTargetOffset();
             this.stats = stats;
         }
 
-        private Vector2 CalculateTargetOffset()
+        public void SetRandomTargetOffset()
         {
+            var viewportWidth = this.actor.scene.camera.ViewportWidth / 2;
             var viewportHeight = this.actor.scene.camera.ViewportHeight / 2;
-            return new Vector2(MachinaGame.Random.CleanRandom.Next(-viewportHeight, viewportHeight), MachinaGame.Random.CleanRandom.Next(-viewportHeight, viewportHeight));
+            this.targetOffset = new Vector2(MachinaGame.Random.CleanRandom.Next(-viewportWidth, viewportWidth), MachinaGame.Random.CleanRandom.Next(-viewportHeight, viewportHeight));
+        }
 
+        public void SetTargetOffset(Vector2 val)
+        {
+            this.targetOffset = val;
         }
 
         public override void DebugDraw(SpriteBatch spriteBatch)
@@ -56,48 +54,23 @@ namespace LD48.Components
         {
             var acceleration = Vector2.Zero;
 
-            if (this.playerTransform != null)
-            {
-                var direction = (playerTransform.Position + this.targetOffset - transform.Position);
-                direction.Normalize();
-                acceleration += direction * dt * 60;
-            }
+            var direction = (playerTransform.Position + this.targetOffset - transform.Position);
+            direction.Normalize();
+            acceleration += direction * dt * 60 * this.stats.Mass;
+            Velocity += acceleration * dt * MachinaGame.Random.CleanRandom.Next(3);
 
+            ClampToTerminalVelocity();
+            transform.Position += Velocity * dt * 60;
+        }
 
-            if (acceleration.LengthSquared() > 0)
-            {
-                Velocity += acceleration * dt * this.stats.Inertia * MachinaGame.Random.CleanRandom.Next(3);
-            }
-
-            if (this.targetResetTimer < 0)
-            {
-                this.targetOffset = CalculateTargetOffset();
-                this.targetResetTimer = this.stats.AttentionSpan + MachinaGame.Random.CleanRandom.Next(-2, 2);
-            }
-
-            this.targetResetTimer -= dt;
-
-            if (this.bubbleSpawnTimer < 0 && MachinaGame.Random.DirtyRandom.NextDouble() < 0.15)
-            {
-                this.bubbleSpawnTimer = (int) (MachinaGame.Random.DirtyRandom.NextDouble() * 5);
-                for (int i = 0; i < 5; i++)
-                {
-                    this.bubbleSpawner.SpawnBubble(transform.Position, Velocity, i / 20f);
-                }
-            }
-            this.bubbleSpawnTimer -= dt;
-
+        private void ClampToTerminalVelocity()
+        {
             var length = Velocity.Length();
             if (length > this.stats.TerminalSpeed)
             {
                 var normalVel = Velocity;
                 normalVel.Normalize();
                 Velocity = normalVel * this.stats.TerminalSpeed;
-            }
-
-            if (Velocity.LengthSquared() > 0)
-            {
-                transform.Position += Velocity * dt * 60;
             }
         }
 

@@ -63,6 +63,8 @@ namespace LD48
             new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));
             new TimeAccumulator(fishActor);
             new Fish(fishActor, player.transform, stats);
+            new ResetTargetOffsetPeriodically(fishActor);
+            new SpawnBubblesRandomly(fishActor);
             new Eatable(fishActor);
             new FishRenderer(fishActor);
             new PlayerTarget(fishActor, player);
