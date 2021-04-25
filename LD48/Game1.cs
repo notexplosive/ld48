@@ -32,6 +32,10 @@ namespace LD48
             targetReticalActor.transform.Depth -= 20;
             new TargetRedical(targetReticalActor, player);
 
+            var seaweedActor = gameScene.AddActor("Seaweed", new Vector2(300, 1000), 0);
+            new Seaweed(seaweedActor);
+            new SeaweedRenderer(seaweedActor);
+
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {
                 var curveBrush = gameScene.AddActor("CurveBrush", gameScene.camera.ViewportCenter);

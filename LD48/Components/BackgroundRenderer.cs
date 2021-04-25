@@ -66,7 +66,7 @@ namespace LD48.Components
             {
                 if (point.Radius > 0)
                 {
-                    spriteBatch.DrawCircle(point, 5, Color.Gray, lineThickness, transform.Depth);
+                    spriteBatch.DrawCircle(point, 5, new Color(0.15f, 0.15f, 0.15f), lineThickness, transform.Depth);
                 }
             }
 

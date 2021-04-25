@@ -28,6 +28,8 @@ namespace LD48.Components
         private float progress;
         private Phase currentPhase = Phase.Attempting;
         private float caughtFishSize;
+        private bool hitPlant;
+        private readonly float lureSize = 10;
 
         public LureRenderer(Actor actor, Player player, EyeRenderer eye) : base(actor)
         {
@@ -41,17 +43,29 @@ namespace LD48.Components
             lureTween.AppendCallback(() =>
             {
                 var caughtFish = false;
+
                 foreach (var targetActor in actor.scene.GetAllActors())
                 {
                     var fish = targetActor.GetComponent<Fish>();
                     if (fish != null)
                     {
-                        if ((targetActor.transform.Position - transform.Position).Length() < 10 + fish.HitRadius)
+                        if ((targetActor.transform.Position - transform.Position).Length() < this.lureSize + fish.HitRadius)
                         {
                             caughtFish = true;
                             this.caughtFishSize = fish.Size;
                             fish.actor.Destroy();
                             break;
+                        }
+                    }
+
+                    var plant = targetActor.GetComponent<Seaweed>();
+
+                    if (!caughtFish && plant != null)
+                    {
+                        var node = plant.NodeAt(transform.Position, this.lureSize);
+                        if (node != null)
+                        {
+                            this.hitPlant = true;
                         }
                     }
                 }
@@ -102,7 +116,14 @@ namespace LD48.Components
                             bubbleSpawner.SpawnBubble(EndPos, new Vector2(rand.Next(-5, 5), rand.Next(-5, 5)), 0f);
                         }
                     });
-                    lureTween.AppendFloatTween(0f, 0.5f, EaseFuncs.QuadraticEaseOut, accessors);
+
+                    var retractDuration = 0.5f;
+                    if (this.hitPlant)
+                    {
+                        retractDuration = 2.5f;
+                    }
+
+                    lureTween.AppendFloatTween(0f, retractDuration, EaseFuncs.QuadraticEaseOut, accessors);
                 }
             });
 
@@ -130,7 +151,15 @@ namespace LD48.Components
         public override void Draw(SpriteBatch spriteBatch)
         {
             var lineThickness = 3f;
-            spriteBatch.DrawLine(EndPos, this.rootPosition, Color.Yellow, lineThickness, transform.Depth);
+            var color = Color.Yellow;
+
+
+            if (this.hitPlant)
+            {
+                color = Color.HotPink;
+            }
+
+            spriteBatch.DrawLine(EndPos, this.rootPosition, color, lineThickness, transform.Depth);
 
             float circleRadius = 10;
 
