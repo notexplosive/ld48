@@ -27,6 +27,7 @@ namespace LD48.Components
 
                 this.points[i] = new CircleF(new Point(RandomX, rand.Next(0, camera.ViewportHeight)), rand.Next(50, 70));
             }
+
         }
 
         public int RandomX
@@ -57,19 +58,39 @@ namespace LD48.Components
                     points[i].Radius -= 2;
                 }
             }
+
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            var camera = this.actor.scene.camera;
+            float depth = (camera.Position.Y - camera.ViewportHeight * 10) / ((float) camera.ViewportHeight * 20);
+            depth = Math.Clamp(depth, 0f, 1f);
+            float inverseDepth = 1f - depth;
+
+            this.actor.scene.sceneLayers.BackgroundColor = GetBGColor(0.01f, 0.01f, 0.1f, inverseDepth);
+
             // var lineThickness = 3f;
             foreach (var point in points)
             {
                 if (point.Radius > 0)
                 {
-                    spriteBatch.DrawCircle(point, 10, new Color(0.15f, 0.15f, 0.15f), point.Radius, transform.Depth);
+                    spriteBatch.DrawCircle(point, 10, GetBGColor(0.01f + depth, 0.05f + depth, 0.5f + depth, inverseDepth), point.Radius, transform.Depth);
                 }
             }
+        }
 
+        private Color GetBGColor(float r, float g, float b, float inverseDepth)
+        {
+            if (inverseDepth == 1f)
+            {
+                return new Color(r, g, b);
+            }
+
+            var factor = Math.Clamp(inverseDepth, 0.2f, 1f);
+
+            return new Color(r * factor, g * factor, b * factor);
         }
     }
 }
