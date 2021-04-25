@@ -61,7 +61,7 @@ namespace LD48.Components
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            var lineThickness = 3f;
+            // var lineThickness = 3f;
             foreach (var point in points)
             {
                 if (point.Radius > 0)
