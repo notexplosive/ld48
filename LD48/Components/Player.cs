@@ -223,6 +223,7 @@ namespace LD48.Components
             {
                 this.lure = this.actor.transform.AddActorAsChild("Lure");
                 this.lure.transform.Position = targetPosition;
+                this.lure.transform.LocalDepth = -1;
                 new BubbleSpawner(this.lure, new Machina.Data.MinMax<int>(14, 24));
                 new LureRenderer(this.lure, this, this.actor.GetComponent<EyeRenderer>());
             }

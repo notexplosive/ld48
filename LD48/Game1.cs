@@ -28,6 +28,10 @@ namespace LD48
             var player = new Player(eye);
             var eyeRenderer = new EyeRenderer(eye);
 
+            var targetReticalActor = gameScene.AddActor("Redical");
+            targetReticalActor.transform.Depth -= 20;
+            new TargetRedical(targetReticalActor, player);
+
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {
                 var curveBrush = gameScene.AddActor("CurveBrush", gameScene.camera.ViewportCenter);
