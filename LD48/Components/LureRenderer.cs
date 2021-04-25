@@ -49,6 +49,7 @@ namespace LD48.Components
                         {
                             caughtFish = true;
                             fish.actor.Destroy();
+                            break;
                         }
                     }
                 }
@@ -61,7 +62,7 @@ namespace LD48.Components
                     bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.4f);
 
                     this.currentPhase = Phase.Caught;
-                    lureTween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
+                    lureTween.AppendFloatTween(0f, 0.2f, EaseFuncs.QuadraticEaseOut, accessors);
                     lureTween.AppendCallback(() =>
                     {
                         this.currentPhase = Phase.Feeding;
@@ -75,7 +76,7 @@ namespace LD48.Components
                         this.eye.TweenOpenAmountTo(2f, 0.1f);
                         this.eye.TweenOpenAmountTo(0f, 0.15f);
                         this.eye.TweenOpenAmountTo(0f, 0.2f); // Stay closed
-                        this.eye.TweenOpenAmountTo(1f, 0.5f);
+                        this.eye.TweenOpenAmountTo(1f, 0.25f);
                     });
                     lureTween.AppendWaitTween(0.5f);
                     lureTween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
