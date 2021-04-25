@@ -27,6 +27,7 @@ namespace LD48.Components
         private BubbleSpawner bubbleSpawner;
         private float progress;
         private Phase currentPhase = Phase.Attempting;
+        private float caughtFishSize;
 
         public LureRenderer(Actor actor, Player player, EyeRenderer eye) : base(actor)
         {
@@ -48,6 +49,7 @@ namespace LD48.Components
                         if ((targetActor.transform.Position - transform.Position).Length() < 10 + fish.HitRadius)
                         {
                             caughtFish = true;
+                            this.caughtFishSize = fish.Size;
                             fish.actor.Destroy();
                             break;
                         }
@@ -78,6 +80,14 @@ namespace LD48.Components
                         this.eye.TweenOpenAmountTo(0f, 0.2f); // Stay closed
                         this.eye.TweenOpenAmountTo(1f, 0.25f);
                     });
+                    lureTween.AppendCallback(() =>
+                    {
+                        var rand = MachinaGame.Random.DirtyRandom;
+                        for (int i = 0; i < 10; i++)
+                        {
+                            bubbleSpawner.SpawnBubble(EndPos, new Vector2(rand.Next(-5, 5), rand.Next(5, 10)), 0f);
+                        }
+                    });
                     lureTween.AppendWaitTween(0.5f);
                     lureTween.AppendFloatTween(0f, 1f, EaseFuncs.QuadraticEaseOut, accessors);
                 }
@@ -86,7 +96,11 @@ namespace LD48.Components
                     lureTween.AppendCallback(() =>
                     {
                         this.currentPhase = Phase.Retracting;
-                        bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0f);
+                        var rand = MachinaGame.Random.DirtyRandom;
+                        for (int i = 0; i < 3; i++)
+                        {
+                            bubbleSpawner.SpawnBubble(EndPos, new Vector2(rand.Next(-5, 5), rand.Next(-5, 5)), 0f);
+                        }
                     });
                     lureTween.AppendFloatTween(0f, 0.5f, EaseFuncs.QuadraticEaseOut, accessors);
                 }
@@ -100,7 +114,7 @@ namespace LD48.Components
             this.lureTween.Update(dt);
             if (this.currentPhase == Phase.Caught && MachinaGame.Random.DirtyRandom.NextDouble() < 0.1f)
             {
-                this.bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.1f);
+                // this.bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.1f);
             }
 
             if (this.lureTween.IsFinished)
@@ -118,16 +132,16 @@ namespace LD48.Components
             var lineThickness = 3f;
             spriteBatch.DrawLine(EndPos, this.rootPosition, Color.Yellow, lineThickness, transform.Depth);
 
-            int circleRadius = 10;
+            float circleRadius = 10;
 
             if (this.currentPhase == Phase.Caught || currentPhase == Phase.Feeding)
             {
-                circleRadius = 25;
+                circleRadius = this.caughtFishSize;
             }
 
             if (this.currentPhase == Phase.Caught || currentPhase == Phase.Feeding)
             {
-                spriteBatch.DrawCircle(new CircleF(EndPos, circleRadius), 10, Color.White, lineThickness, transform.Depth);
+                spriteBatch.DrawCircle(new CircleF(EndPos, circleRadius), 10, Color.White, lineThickness * 2, transform.Depth);
             }
         }
     }
