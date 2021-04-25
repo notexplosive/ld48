@@ -17,6 +17,7 @@ namespace LD48.Components
         private readonly TweenAccessors<float> openAmountAccessors;
         private readonly TweenChain eyeTween;
         private readonly Player player;
+        private readonly LevelTransition levelTransition;
         private readonly CatmullRomCurve[] wires = Array.Empty<CatmullRomCurve>();
         private CatmullRomCurve[] eyeCurves = Array.Empty<CatmullRomCurve>();
         private float openPercent;
@@ -37,8 +38,11 @@ namespace LD48.Components
         public EyeRenderer(Actor actor) : base(actor)
         {
             this.player = RequireComponent<Player>();
-            this.player.onWakeUp += WakeUpAnimation;
-            this.player.onFallAsleep += FallAsleepAnimation;
+            this.levelTransition = RequireComponent<LevelTransition>();
+            this.levelTransition.onWakeUp += WakeUpAnimation;
+            this.levelTransition.onFallAsleep += FallAsleepAnimation;
+
+
 
             this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
             this.eyeTween = new TweenChain();
@@ -129,7 +133,7 @@ namespace LD48.Components
 
         public void FallAsleepAnimation()
         {
-            this.player.Asleep = true;
+            this.levelTransition.Asleep = true;
             this.lookTarget = null;
             ClearTween();
             TweenOpenAmountTo(0f, 2f);
@@ -142,7 +146,7 @@ namespace LD48.Components
             TweenOpenAmountTo(1, 1.5f);
             this.eyeTween.AppendCallback(() =>
             {
-                this.player.Asleep = false;
+                this.levelTransition.Asleep = false;
             });
         }
 
@@ -200,7 +204,7 @@ namespace LD48.Components
             // chain
             for (int i = 0; i < 15; i++)
             {
-                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * Math.Max(1, -this.player.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
+                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * Math.Max(1, -this.levelTransition.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
             }
 
             spriteBatch.DrawCircle(new CircleF(IrisCenter, 10 * this.openPercent + 10 * EaseFuncs.CubicEaseOut(this.aimTimer) * this.openPercent), 15, Color.White, lineThickness, transform.Depth);

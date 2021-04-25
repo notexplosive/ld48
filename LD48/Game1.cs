@@ -27,6 +27,7 @@ namespace LD48
             new BackgroundRenderer(bgActor, gameScene.camera);
 
             var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, -256));
+            new LevelTransition(eye);
             var player = new Player(eye);
             var eyeRenderer = new EyeRenderer(eye);
 
@@ -74,12 +75,12 @@ namespace LD48
             tween.AddLocalMoveTween(new Vector2(seaweedActor.transform.Position.X, position.Y + yOffset), 1, EaseFuncs.QuadraticEaseOut);
         }
 
-        public static void SpawnJellyfish(Scene gameScene, Player player)
+        public static void SpawnJellyfish(Scene gameScene, LevelTransition levelTransition)
         {
             var jellyFishActor = gameScene.AddActor("Jellyfish", new Vector2(200, 200));
             new BubbleSpawner(jellyFishActor, new Machina.Data.MinMax<int>(5, 7));
-            new Fish(jellyFishActor, player.transform, FishStats.jellyfish);
-            new Jellyfish(jellyFishActor, player);
+            new Fish(jellyFishActor, levelTransition.transform, FishStats.jellyfish);
+            new Jellyfish(jellyFishActor, levelTransition);
             new JellyfishRenderer(jellyFishActor);
             new NewTargetOffsetWhenReachesCurrent(jellyFishActor);
         }

@@ -16,10 +16,10 @@ namespace LD48.Components
             get; private set;
         }
 
-        public Jellyfish(Actor actor, Player player) : base(actor)
+        public Jellyfish(Actor actor, LevelTransition transition) : base(actor)
         {
             this.fish = RequireComponent<Fish>();
-            player.onFallAsleep += RunAwayAndDie;
+            transition.onFallAsleep += RunAwayAndDie;
         }
 
         public override void Update(float dt)
