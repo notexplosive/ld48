@@ -195,6 +195,11 @@ namespace LD48.Components
                 {
                     Game1.SpawnSeaweed(this.actor.scene, transform.Position, seaweedInfo);
                 }
+
+                for (int i = 0; i < currentLevel.JellyfishCount; i++)
+                {
+                    Game1.SpawnJellyfish(this.actor.scene, this);
+                }
                 this.levelIndex++;
             }
             else

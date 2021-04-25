@@ -34,21 +34,11 @@ namespace LD48
             targetReticalActor.transform.Depth -= 20;
             new TargetRedical(targetReticalActor, player);
 
-
-            var jellyFishActor = gameScene.AddActor("Jellyfish", new Vector2(200, 200));
-            new BubbleSpawner(jellyFishActor, new Machina.Data.MinMax<int>(5, 7));
-            new Fish(jellyFishActor, player.transform, FishStats.jellyfish);
-            new Jellyfish(jellyFishActor, player);
-            new JellyfishRenderer(jellyFishActor);
-            new NewTargetOffsetWhenReachesCurrent(jellyFishActor);
-
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {
                 var curveBrush = gameScene.AddActor("CurveBrush", gameScene.camera.ViewportCenter);
                 new CurveEditor(curveBrush);
             });
-
-
 
             if (DebugLevel >= DebugLevel.Passive)
             {
@@ -82,6 +72,16 @@ namespace LD48
             var tween = new TweenChainComponent(seaweedActor);
 
             tween.AddLocalMoveTween(new Vector2(seaweedActor.transform.Position.X, position.Y + yOffset), 1, EaseFuncs.QuadraticEaseOut);
+        }
+
+        public static void SpawnJellyfish(Scene gameScene, Player player)
+        {
+            var jellyFishActor = gameScene.AddActor("Jellyfish", new Vector2(200, 200));
+            new BubbleSpawner(jellyFishActor, new Machina.Data.MinMax<int>(5, 7));
+            new Fish(jellyFishActor, player.transform, FishStats.jellyfish);
+            new Jellyfish(jellyFishActor, player);
+            new JellyfishRenderer(jellyFishActor);
+            new NewTargetOffsetWhenReachesCurrent(jellyFishActor);
         }
     }
 }

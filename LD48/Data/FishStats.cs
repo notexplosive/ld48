@@ -21,9 +21,9 @@ namespace LD48.Data
         public static FishStats jellyfish = new FishStats
         {
             LingerTime = 1,
-            Mass = 2,
-            TerminalSpeed = 2,
-            SizeLevel = 16
+            Mass = 20,
+            TerminalSpeed = 5,
+            SizeLevel = 10
         };
 
         public static FishStats chonkers = new FishStats

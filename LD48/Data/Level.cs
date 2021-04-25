@@ -8,6 +8,7 @@ namespace LD48.Data
     class Level
     {
         public int FishCount = 1;
+        public int JellyfishCount;
         public FishStats FishStats;
         public SeaweedInfo[] Seaweed = Array.Empty<SeaweedInfo>();
 
@@ -17,6 +18,7 @@ namespace LD48.Data
             {
                 FishCount = 1,
                 FishStats = FishStats.basic,
+                JellyfishCount = 3
             },
 
             new Level
