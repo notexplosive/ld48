@@ -46,14 +46,14 @@ namespace LD48.Components
 
                 foreach (var targetActor in actor.scene.GetAllActors())
                 {
-                    var fish = targetActor.GetComponent<Fish>();
-                    if (fish != null)
+                    var eatable = targetActor.GetComponent<Eatable>();
+                    if (eatable != null)
                     {
-                        if ((targetActor.transform.Position - transform.Position).Length() < this.lureSize + fish.HitRadius)
+                        if ((targetActor.transform.Position - transform.Position).Length() < this.lureSize + eatable.fish.HitRadius)
                         {
                             caughtFish = true;
-                            this.caughtFishSize = fish.Size;
-                            fish.actor.Destroy();
+                            this.caughtFishSize = eatable.fish.Size;
+                            eatable.actor.Destroy();
                             break;
                         }
                     }

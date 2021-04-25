@@ -17,7 +17,7 @@ namespace LD48.Components
 
         public float Size => this.stats.SizeLevel * 5;
 
-        private readonly Transform targetTransform;
+        private readonly Transform playerTransform;
         private Vector2 targetOffset;
         private float targetResetTimer;
 
@@ -29,9 +29,9 @@ namespace LD48.Components
         private readonly BubbleSpawner bubbleSpawner;
         public readonly FishStats stats;
 
-        public Fish(Actor actor, Transform targetTransform, FishStats stats) : base(actor)
+        public Fish(Actor actor, Transform playerTransform, FishStats stats) : base(actor)
         {
-            this.targetTransform = targetTransform;
+            this.playerTransform = playerTransform;
             this.targetOffset = CalculateTargetOffset();
             this.bubbleSpawner = RequireComponent<BubbleSpawner>();
             this.stats = stats;
@@ -47,32 +47,32 @@ namespace LD48.Components
         public override void DebugDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawCircle(new CircleF(transform.Position, HitRadius), 5, Color.Red, 1, transform.Depth);
-            spriteBatch.DrawCircle(new CircleF(this.targetTransform.Position + this.targetOffset, 5), 5, Color.Red, 1, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(this.playerTransform.Position + this.targetOffset, 5), 5, Color.Red, 1, transform.Depth);
         }
 
         public float HitRadius => Size * 2 + Velocity.Length() * 2.5f;
 
         public override void Update(float dt)
         {
-            var velocityOffset = Vector2.Zero;
+            var acceleration = Vector2.Zero;
 
-            if (this.targetTransform != null)
+            if (this.playerTransform != null)
             {
-                var direction = (targetTransform.Position + this.targetOffset - transform.Position);
+                var direction = (playerTransform.Position + this.targetOffset - transform.Position);
                 direction.Normalize();
-                velocityOffset += direction * dt * 60;
+                acceleration += direction * dt * 60;
             }
 
 
-            if (velocityOffset.LengthSquared() > 0)
+            if (acceleration.LengthSquared() > 0)
             {
-                Velocity += velocityOffset * dt * this.stats.Inertia * MachinaGame.Random.CleanRandom.Next(3);
+                Velocity += acceleration * dt * this.stats.Inertia * MachinaGame.Random.CleanRandom.Next(3);
             }
 
-            if (MachinaGame.Random.CleanRandom.NextDouble() < 0.1 && this.targetResetTimer < 0)
+            if (this.targetResetTimer < 0)
             {
                 this.targetOffset = CalculateTargetOffset();
-                this.targetResetTimer = MachinaGame.Random.CleanRandom.Next(4, 12);
+                this.targetResetTimer = this.stats.AttentionSpan + MachinaGame.Random.CleanRandom.Next(-2, 2);
             }
 
             this.targetResetTimer -= dt;

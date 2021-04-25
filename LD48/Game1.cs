@@ -35,6 +35,12 @@ namespace LD48
             new TargetRedical(targetReticalActor, player);
 
 
+            var jellyFishActor = gameScene.AddActor("Jellyfish", new Vector2(200, 200));
+            new BubbleSpawner(jellyFishActor, new Machina.Data.MinMax<int>(5, 7));
+            new Fish(jellyFishActor, player.transform, FishStats.jellyfish);
+            new Jellyfish(jellyFishActor, player);
+            new JellyfishRenderer(jellyFishActor);
+
 
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {
@@ -56,7 +62,8 @@ namespace LD48
             var fishActor = gameScene.AddActor("Fish", position);
             new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));
             new TimeAccumulator(fishActor);
-            var fish = new Fish(fishActor, player.transform, stats);
+            new Fish(fishActor, player.transform, stats);
+            new Eatable(fishActor);
             new FishRenderer(fishActor);
             new PlayerTarget(fishActor, player);
         }

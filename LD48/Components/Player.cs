@@ -108,7 +108,7 @@ namespace LD48.Components
 
             if (this.CandidateTargets.Count == 0 && !IsInLevelTransition && IsPlayingButIdle)
             {
-                AdvanceToNextLevel(4);
+                FinishLevel(4);
             }
 
             if (this.readyToStartLevel && Velocity.Y == 0)
@@ -158,7 +158,7 @@ namespace LD48.Components
             MousePos = currentPosition;
         }
 
-        public void AdvanceToNextLevel(int duration)
+        public void FinishLevel(int duration)
         {
             this.levelTransitionTween.Clear();
             this.levelTransitionTween.AppendCallback(() => { FallAsleep(); });

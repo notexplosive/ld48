@@ -1,0 +1,98 @@
+﻿using Machina.Components;
+using Machina.Data;
+using Machina.Engine;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace LD48.Components
+{
+    class JellyfishRenderer : BaseComponent
+    {
+        private Jellyfish jellyfish;
+        private Fish fish;
+        private HairStrand[] strands;
+        private int follicleCount = 5;
+        private float hairTimer;
+
+        public JellyfishRenderer(Actor actor) : base(actor)
+        {
+            this.jellyfish = RequireComponent<Jellyfish>();
+            this.fish = RequireComponent<Fish>();
+
+            this.strands = new HairStrand[this.follicleCount];
+            for (int i = 0; i < this.follicleCount; i++)
+            {
+                this.strands[i] = new HairStrand(transform);
+            }
+        }
+
+        public override void Update(float dt)
+        {
+            transform.Angle = this.fish.Velocity.ToAngle() + MathF.PI / 2;
+
+            if (this.hairTimer < 0)
+            {
+                for (int i = 0; i < follicleCount; i++)
+                {
+                    this.strands[i].Cycle(FolliclePos(i));
+                }
+                this.hairTimer = 0.1f;
+            }
+            this.hairTimer -= dt;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            var lineThickness = 3;
+            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), 10, Color.White, lineThickness, transform.Depth);
+
+            for (int i = 0; i < follicleCount; i++)
+            {
+                this.strands[i].Draw(spriteBatch, FolliclePos(i), lineThickness, transform.Depth);
+            }
+        }
+
+        private Vector2 FolliclePos(int i)
+        {
+            var aof = MathF.PI / this.follicleCount * i - MathF.PI / 2;
+            return transform.Position + new Vector2(MathF.Cos(transform.Angle + aof), MathF.Sin(transform.Angle + aof)) * this.fish.Size;
+        }
+
+        private class HairStrand
+        {
+            private readonly LinkedList<Vector2> list = new LinkedList<Vector2>();
+            private readonly int listLength = 20;
+
+            public HairStrand(Transform transform)
+            {
+                for (int i = 0; i < this.listLength; i++)
+                {
+                    this.list.AddFirst(transform.Position);
+                }
+            }
+
+            public void Cycle(Vector2 folliclePos)
+            {
+                this.list.AddFirst(folliclePos);
+                this.list.RemoveLast();
+            }
+
+            public void Draw(SpriteBatch spriteBatch, Vector2 folliclePos, float lineThickness, Depth depth)
+            {
+                var prevNode = folliclePos;
+                var i = 0;
+                foreach (var node in this.list)
+                {
+                    var opacity = 1 - (float) i / this.listLength;
+                    spriteBatch.DrawLine(node, prevNode, new Color(opacity, opacity, opacity), lineThickness, depth);
+                    prevNode = node;
+                    i++;
+                }
+            }
+        }
+    }
+}
