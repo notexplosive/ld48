@@ -66,6 +66,7 @@ namespace LD48.Components
                         if (node != null)
                         {
                             this.hitPlant = true;
+                            plant.Hit();
                         }
                     }
                 }

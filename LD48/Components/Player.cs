@@ -15,7 +15,7 @@ namespace LD48.Components
     {
         public Input input;
         private Actor lure;
-        private int level = 0;
+        private int levelIndex = 0;
         public bool IsAiming
         {
             get; private set;
@@ -54,6 +54,7 @@ namespace LD48.Components
         public bool IsInLevelTransition => !this.levelTransitionTween.IsFinished || Asleep;
         public Action onWakeUp;
         public Action onFallAsleep;
+        private bool readyToStartLevel;
 
         public Player(Actor actor) : base(actor)
         {
@@ -67,8 +68,7 @@ namespace LD48.Components
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
             this.levelTransitionTween.AppendCallback(() =>
             {
-                WakeUp();
-                StartNextLevel();
+                this.readyToStartLevel = true;
             });
         }
 
@@ -109,6 +109,13 @@ namespace LD48.Components
             if (this.CandidateTargets.Count == 0 && !IsInLevelTransition && IsPlayingButIdle)
             {
                 AdvanceToNextLevel(4);
+            }
+
+            if (this.readyToStartLevel && Velocity.Y == 0)
+            {
+                this.readyToStartLevel = false;
+                StartNextLevel();
+                WakeUp();
             }
         }
 
@@ -159,33 +166,36 @@ namespace LD48.Components
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = true; });
             this.levelTransitionTween.AppendWaitTween(duration);
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
-            this.levelTransitionTween.AppendWaitTween(duration / 2);
             this.levelTransitionTween.AppendCallback(() =>
             {
-                StartNextLevel();
-                WakeUp();
+                this.readyToStartLevel = true;
             });
         }
 
         public void StartNextLevel()
         {
-            var levels = Level.Array;
-            MachinaGame.Print("Starting level", this.level, levels.Length);
+            var levels = Level.All;
+            MachinaGame.Print("Starting level", this.levelIndex, levels.Length);
 
-            if (levels.Length > this.level)
+            if (levels.Length > this.levelIndex)
             {
-                var level = levels[this.level];
+                var currentLevel = levels[this.levelIndex];
 
-                for (int i = 0; i < level.FishCount; i++)
+                for (int i = 0; i < currentLevel.FishCount; i++)
                 {
                     var camWidth = this.actor.scene.camera.ViewportWidth;
                     float randomX = MachinaGame.Random.CleanRandom.Next(camWidth / 2, camWidth) * ((MachinaGame.Random.CleanRandom.NextDouble() < 0.5) ? -1f : 1f);
-                    var fishPos = new Vector2(randomX, this.actor.scene.camera.ViewportHeight / 2);
+                    var fishPos = new Vector2(randomX, 0);
 
                     Game1.SpawnNewFish(
-                        this.actor.scene, transform.Position + fishPos, this, level.FishStats);
+                        this.actor.scene, transform.Position + fishPos, this, currentLevel.FishStats);
                 }
-                this.level++;
+
+                foreach (var seaweedInfo in currentLevel.Seaweed)
+                {
+                    Game1.SpawnSeaweed(this.actor.scene, transform.Position, seaweedInfo);
+                }
+                this.levelIndex++;
             }
             else
             {

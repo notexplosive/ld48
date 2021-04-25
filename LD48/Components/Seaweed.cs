@@ -15,6 +15,11 @@ namespace LD48.Components
         private float baseAngle;
         public Node[] nodes;
         private float time;
+        public float HitTimer
+        {
+            get;
+            private set;
+        }
 
         public Vector2 EndPoint => NormalizedEnd * this.length;
         public Vector2 StartPoint => transform.Position;
@@ -33,6 +38,8 @@ namespace LD48.Components
                 var sign = i % 2 == 0 ? -1 : 1;
                 this.nodes[i] = new Node(this, (this.length / (numberOfNodes - 1) * i), 40, MathF.PI / 3 * sign);
             }
+
+            this.time = (float) MachinaGame.Random.CleanRandom.NextDouble() * MathF.PI * 2;
         }
 
         public override void Update(float dt)
@@ -45,6 +52,8 @@ namespace LD48.Components
             this.time += dt;
 
             transform.Angle = this.baseAngle + Sway;
+
+            HitTimer -= dt;
         }
 
         public Node NodeAt(Vector2 position, float cursorRadius)
@@ -84,6 +93,11 @@ namespace LD48.Components
             {
                 this.time += dt * MachinaGame.Random.DirtyRandom.Next(1, 5);
             }
+        }
+
+        public void Hit()
+        {
+            this.HitTimer = 0.5f;
         }
     }
 }

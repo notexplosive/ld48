@@ -26,10 +26,16 @@ namespace LD48.Components
         public override void Draw(SpriteBatch spriteBatch)
         {
             var lineThickness = 3f;
-            spriteBatch.DrawLine(transform.Position, transform.Position + seaweed.EndPoint, Color.White, lineThickness, transform.Depth + 1);
+            var color = Color.White;
+
+            if (this.seaweed.HitTimer > 0)
+            {
+                color = Color.HotPink;
+            }
+            spriteBatch.DrawLine(transform.Position, transform.Position + seaweed.EndPoint, color, lineThickness, transform.Depth + 1);
             foreach (var node in this.seaweed.nodes)
             {
-                spriteBatch.DrawCircle(new CircleF(node.CenterPos, node.radius), 10, Color.White, lineThickness, transform.Depth - 1);
+                spriteBatch.DrawCircle(new CircleF(node.CenterPos, node.radius), 10, color, lineThickness, transform.Depth - 1);
             }
         }
     }

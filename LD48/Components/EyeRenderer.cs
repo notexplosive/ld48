@@ -37,8 +37,8 @@ namespace LD48.Components
         public EyeRenderer(Actor actor) : base(actor)
         {
             this.player = RequireComponent<Player>();
-            this.player.onWakeUp += WakeUp;
-            this.player.onFallAsleep += FallAsleep;
+            this.player.onWakeUp += WakeUpAnimation;
+            this.player.onFallAsleep += FallAsleepAnimation;
 
             this.openAmountAccessors = new TweenAccessors<float>(() => this.openPercent, val => this.openPercent = val);
             this.eyeTween = new TweenChain();
@@ -127,7 +127,7 @@ namespace LD48.Components
             }
         }
 
-        public void FallAsleep()
+        public void FallAsleepAnimation()
         {
             this.player.Asleep = true;
             this.lookTarget = null;
@@ -135,12 +135,11 @@ namespace LD48.Components
             TweenOpenAmountTo(0f, 2f);
         }
 
-        public void WakeUp()
+        public void WakeUpAnimation()
         {
             this.lookTarget = null;
             ClearTween();
-            TweenDelay(3);
-            TweenOpenAmountTo(1, 2f);
+            TweenOpenAmountTo(1, 1.5f);
             this.eyeTween.AppendCallback(() =>
             {
                 this.player.Asleep = false;
