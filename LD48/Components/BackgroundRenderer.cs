@@ -25,7 +25,7 @@ namespace LD48.Components
             for (int i = 0; i < 32; i++)
             {
 
-                this.points[i] = new CircleF(new Point(RandomX, rand.Next(0, camera.ViewportHeight)), rand.Next(30, 50));
+                this.points[i] = new CircleF(new Point(RandomX, rand.Next(0, camera.ViewportHeight)), rand.Next(50, 70));
             }
         }
 
@@ -51,9 +51,9 @@ namespace LD48.Components
 
             for (int i = 0; i < 32; i++)
             {
-                if (points[i].Position.Y < camera.Position.Y - 32)
+                if (points[i].Position.Y < camera.Position.Y - points[i].Radius)
                 {
-                    points[i].Position = new Point(RandomX, (int) camera.Position.Y + camera.ViewportHeight + 32);
+                    points[i].Position = new Point(RandomX, (int) camera.Position.Y + camera.ViewportHeight + (int) points[i].Radius);
                     points[i].Radius -= 2;
                 }
             }
@@ -66,7 +66,7 @@ namespace LD48.Components
             {
                 if (point.Radius > 0)
                 {
-                    spriteBatch.DrawCircle(point, 10, new Color(0.15f, 0.15f, 0.15f), lineThickness, transform.Depth);
+                    spriteBatch.DrawCircle(point, 10, new Color(0.15f, 0.15f, 0.15f), point.Radius, transform.Depth);
                 }
             }
 
