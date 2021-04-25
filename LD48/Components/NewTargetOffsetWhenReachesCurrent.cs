@@ -20,7 +20,7 @@ namespace LD48.Components
         public override void Update(float dt)
         {
             var distanceFromTarget = (this.actor.transform.Position - this.fish.TargetPosition).Length();
-            if (distanceFromTarget < this.fish.Size)
+            if (distanceFromTarget < this.fish.HitRadius)
             {
                 this.fish.SetRandomTargetOffset();
             }

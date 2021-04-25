@@ -37,7 +37,7 @@ namespace LD48.Components
             var angularVel = ((this.fish.Velocity.ToAngle() + MathF.PI / 2) - transform.Angle) / 40;
             transform.Angle += angularVel;
 
-            if (Math.Abs(angularVel) > 0.06f)
+            if (Math.Abs(angularVel) > 0.06f && !this.jellyfish.HasEnded)
             {
                 for (int i = 0; i < follicleCount; i++)
                 {
@@ -65,11 +65,11 @@ namespace LD48.Components
             {
                 color = Color.HotPink;
             }
-            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), 20, color, lineThickness, transform.Depth);
+            spriteBatch.DrawCircle(new CircleF(transform.Position, this.fish.Size), MachinaGame.Random.DirtyRandom.Next(10, 20), color, lineThickness, transform.Depth);
 
             for (int i = 0; i < follicleCount; i++)
             {
-                this.strands[i].Draw(spriteBatch, FolliclePos(i), lineThickness, transform.Depth, color);
+                this.strands[i].Draw(spriteBatch, FolliclePos(i), lineThickness * 4, transform.Depth, color);
             }
         }
 

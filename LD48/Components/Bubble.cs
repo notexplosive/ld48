@@ -48,6 +48,13 @@ namespace LD48.Components
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            var cam = this.actor.scene.camera;
+            var viewRect = new Rectangle(cam.Position.ToPoint(), new Point(cam.ViewportWidth, cam.ViewportHeight));
+            if (!viewRect.Contains(this.actor.transform.Position.ToPoint()))
+            {
+                return;
+            }
+
             if (delay < 0)
             {
                 var lineThickness = 3;

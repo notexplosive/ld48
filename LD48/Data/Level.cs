@@ -12,46 +12,9 @@ namespace LD48.Data
         public FishStats FishStats;
         public SeaweedInfo[] Seaweed = Array.Empty<SeaweedInfo>();
 
-        public static Level[] All = new Level[]
+        public static readonly Level[] All = new Level[]
         {
 
-            new Level
-            {
-                // Smallfish -> Easy
-                FishCount = 8,
-                FishStats = FishStats.tinyPlayful,
-            },
-
-            new Level
-            {
-                // Smallfish -> Medium
-                FishCount = 3,
-                FishStats = FishStats.tinyErratic,
-            },
-
-            new Level
-            {
-                // Seaweed -> Medium
-                FishCount = 3,
-                FishStats = FishStats.fastChonkers,
-                Seaweed = SeaweedInfo.forest
-            },
-
-            new Level
-            {
-                // Seaweed -> Medium 2
-                FishCount = 3,
-                FishStats = FishStats.easyChonkers,
-                Seaweed = SeaweedInfo.sidesVeryHard
-            },
-
-            new Level
-            {
-                // Seaweed -> Introduce
-                FishCount = 5,
-                FishStats = FishStats.medium,
-                Seaweed = SeaweedInfo.sidesHard
-            },
 
             new Level
             {
@@ -60,41 +23,104 @@ namespace LD48.Data
                 FishStats = FishStats.extremelyEasy,
             },
 
+            // SMALL FISH
+
             new Level
             {
-                // Seaweed -> Hard
-                FishCount = 2,
+                // Smallfish -> Easy
+                FishCount = 5,
+                FishStats = FishStats.tinyLinger,
+            },
+
+            new Level
+            {
+                // Smallfish -> Medium
+                FishCount = 4,
                 FishStats = FishStats.tiny,
+            },
+
+            new Level
+            {
+                // Smallfish -> Hard
+                FishCount = 5,
+                FishStats = FishStats.tinyErratic,
+            },
+
+            // SEAWEED
+
+            new Level
+            {
+                // Seaweed -> Easy
+                FishCount = 5,
+                FishStats = FishStats.medium,
+                Seaweed = SeaweedInfo.sidesHard
+            },
+
+            new Level
+            {
+                // Seaweed -> Medium
+                FishCount = 3,
+                FishStats = FishStats.mediumLinger,
                 Seaweed = SeaweedInfo.forest
             },
 
             new Level
             {
+                // Seaweed -> Medium 2
+                FishCount = 6,
+                FishStats = FishStats.easyChonkers,
+                Seaweed = SeaweedInfo.sidesVeryHard
+            },
+
+            new Level
+            {
+                // Seaweed -> Hard
+                FishCount = 5,
+                FishStats = FishStats.tiny,
+                Seaweed = SeaweedInfo.forest
+            },
+
+
+            // JELLYFISH
+
+            new Level
+            {
+                // Jellyfish - Easy
+                // Lots of jellyfish, finding the fish is challenging but otherwise easy
+                FishCount = 8,
+                FishStats = FishStats.fastChonkers,
+                JellyfishCount = 1,
+            },
+
+            new Level
+            {
+                // Jellyfish - Medium
+                // Lots of jellyfish, finding the fish is challenging but otherwise easy
+                FishCount = 6,
+                FishStats = FishStats.extremelyEasy,
+                JellyfishCount = 6
+            },
+
+            new Level
+            {
+                // Jellyfish - Hard
                 // Lots of jellyfish, finding the fish is challenging but otherwise easy
                 FishCount = 5,
-                FishStats = FishStats.extremelyEasy,
-                JellyfishCount = 15
+                FishStats = FishStats.tinyErratic,
+                JellyfishCount = 5,
             },
 
-            new Level
-            {
-                FishCount = 3,
-                FishStats = FishStats.easyChonkers
-            },
+            // MIXTURE
 
             new Level
             {
                 FishCount = 5,
-                FishStats = FishStats.tiny
+                FishStats = FishStats.tinyErratic,
+                Seaweed = SeaweedInfo.forest,
+                JellyfishCount = 1,
             },
 
-            // Late hard level
-            new Level
-            {
-                FishCount = 12,
-                FishStats = FishStats.medium,
-                Seaweed = SeaweedInfo.sidesEasy
-            }
+            // FINALE
 
         };
     }

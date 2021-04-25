@@ -129,7 +129,7 @@ namespace LD48.Components
 
                 foreach (var seaweedInfo in currentLevel.Seaweed)
                 {
-                    Game1.SpawnSeaweed(this.actor.scene, transform.Position, seaweedInfo);
+                    Game1.SpawnSeaweed(this.actor.scene, transform.Position, seaweedInfo, this);
                 }
 
                 for (int i = 0; i < currentLevel.JellyfishCount; i++)

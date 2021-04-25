@@ -15,6 +15,9 @@ namespace LD48.Components
         private float baseAngle;
         public Node[] nodes;
         private float time;
+        private LevelTransition levelTransition;
+        private bool dead;
+
         public float HitTimer
         {
             get;
@@ -26,7 +29,7 @@ namespace LD48.Components
         public Vector2 NormalizedEnd => new Vector2(MathF.Cos(transform.Angle), MathF.Sin(transform.Angle));
         private float Sway => MathF.Sin(this.time) * swayFactor;
 
-        public Seaweed(Actor actor, float length, int numberOfNodes, float swayFactorCoef) : base(actor)
+        public Seaweed(Actor actor, float length, int numberOfNodes, float swayFactorCoef, LevelTransition levelTransition) : base(actor)
         {
             this.length = length;
             this.swayFactor = 1f / swayFactorCoef;
@@ -40,6 +43,23 @@ namespace LD48.Components
             }
 
             this.time = (float) MachinaGame.Random.CleanRandom.NextDouble() * MathF.PI * 2;
+
+            this.levelTransition = levelTransition;
+            this.levelTransition.onFallAsleep += AddDestroyTimer;
+        }
+
+        public override void OnDelete()
+        {
+            this.levelTransition.onFallAsleep -= AddDestroyTimer;
+        }
+
+        private void AddDestroyTimer()
+        {
+            if (!this.dead)
+            {
+                this.dead = true;
+                new DestroyTimer(this.actor, 10);
+            }
         }
 
         public override void Update(float dt)

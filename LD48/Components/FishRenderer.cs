@@ -26,7 +26,7 @@ namespace LD48.Components
             var vel = this.fish.Velocity;
             var velLength = vel.Length();
             var lengthOffset = velLength * 1.5f;
-            var lineThickness = 3f;
+            var lineThickness = 6f;
             var halfBodyWidth = this.fish.Size * 1.25f + lengthOffset;
             spriteBatch.DrawEllipse(transform.Position, new Vector2(halfBodyWidth, this.fish.Size), 16, Color.White, lineThickness, transform.Depth);
 

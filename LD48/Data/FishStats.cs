@@ -20,10 +20,10 @@ namespace LD48.Data
 
         public static FishStats jellyfish = new FishStats
         {
-            LingerTime = 1,
-            Mass = 20,
-            TerminalSpeed = 5,
-            SizeLevel = 10
+            LingerTime = 5,
+            Mass = 80,
+            TerminalSpeed = 20,
+            SizeLevel = 25
         };
 
         public static FishStats easyChonkers = new FishStats
@@ -36,7 +36,7 @@ namespace LD48.Data
         public static FishStats fastChonkers = new FishStats
         {
             Mass = 100,
-            TerminalSpeed = 30,
+            TerminalSpeed = 20,
             SizeLevel = 10,
             LingerTime = 1
         };
@@ -56,7 +56,7 @@ namespace LD48.Data
             LingerTime = 0.5f
         };
 
-        public static FishStats tinyPlayful = new FishStats
+        public static FishStats tinyLinger = new FishStats
         {
             Mass = 100,
             TerminalSpeed = 12,
@@ -64,11 +64,19 @@ namespace LD48.Data
             LingerTime = 3f
         };
 
+        public static FishStats mediumLinger = new FishStats
+        {
+            Mass = 100,
+            TerminalSpeed = 12,
+            SizeLevel = 5,
+            LingerTime = 3f
+        };
+
         public static FishStats medium = new FishStats
         {
             Mass = 30,
             TerminalSpeed = 13,
-            SizeLevel = 3,
+            SizeLevel = 5,
         };
     }
 }

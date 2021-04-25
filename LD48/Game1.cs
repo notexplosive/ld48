@@ -61,14 +61,13 @@ namespace LD48
             new PlayerTarget(fishActor, player);
         }
 
-        public static void SpawnSeaweed(Scene gameScene, Vector2 position, SeaweedInfo seaweedInfo)
+        public static void SpawnSeaweed(Scene gameScene, Vector2 position, SeaweedInfo seaweedInfo, LevelTransition levelTransition)
         {
             var yOffset = gameScene.camera.ViewportHeight / 2;
             var x = gameScene.camera.ViewportWidth * seaweedInfo.XPercent;
-            MachinaGame.Print(seaweedInfo.XPercent, x);
 
             var seaweedActor = gameScene.AddActor("Seaweed", new Vector2(x, position.Y + yOffset + seaweedInfo.Length * 2), -MathF.PI / 2 + seaweedInfo.Angle);
-            new Seaweed(seaweedActor, seaweedInfo.Length, seaweedInfo.NodeCount, 5);
+            new Seaweed(seaweedActor, seaweedInfo.Length, seaweedInfo.NodeCount, 5, levelTransition);
             new SeaweedRenderer(seaweedActor);
             var tween = new TweenChainComponent(seaweedActor);
 
@@ -77,7 +76,9 @@ namespace LD48
 
         public static void SpawnJellyfish(Scene gameScene, LevelTransition levelTransition)
         {
-            var jellyFishActor = gameScene.AddActor("Jellyfish", new Vector2(200, 200));
+            var sign = MachinaGame.Random.CleanRandom.NextDouble() < 0.5f ? 1 : 1;
+            var x = gameScene.camera.ViewportWidth * 1.5f * sign;
+            var jellyFishActor = gameScene.AddActor("Jellyfish", new Vector2(x, levelTransition.transform.Position.Y));
             new BubbleSpawner(jellyFishActor, new Machina.Data.MinMax<int>(5, 7));
             new Fish(jellyFishActor, levelTransition.transform, FishStats.jellyfish);
             new Jellyfish(jellyFishActor, levelTransition);
