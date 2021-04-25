@@ -20,6 +20,8 @@ namespace LD48.Components
             get; private set;
         }
 
+        public bool IsAllowedToDeploy => !IsLureDeployed && !IsInLevelTransition;
+
         public Vector2 MousePos
         {
             get; private set;
@@ -88,7 +90,7 @@ namespace LD48.Components
             ProcessInput(dt);
             transform.Position += Velocity * dt * 60;
 
-            if (IsAiming)
+            if (IsAiming && !IsLureDeployed && !IsInLevelTransition)
             {
                 this.actor.scene.TimeScale = 0.25f;
             }
@@ -197,11 +199,14 @@ namespace LD48.Components
 
         public override void OnMouseButton(MouseButton button, Vector2 currentPosition, ButtonState state)
         {
-            if (button == MouseButton.Left && !IsInLevelTransition && !IsLureDeployed)
+            if (button == MouseButton.Left)
             {
                 if (state == ButtonState.Released && IsAiming)
                 {
-                    SpawnLure(currentPosition);
+                    if (!IsInLevelTransition)
+                    {
+                        SpawnLure(currentPosition);
+                    }
                     IsAiming = false;
                 }
 

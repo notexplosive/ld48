@@ -54,13 +54,13 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
-            if (this.player.IsAiming)
+            if (this.player.IsAiming && this.player.IsAllowedToDeploy)
             {
                 this.aimTimer += dt * 4;
             }
             else
             {
-                this.aimTimer -= dt * 4;
+                this.aimTimer -= dt * 10;
             }
             this.aimTimer = Math.Clamp(this.aimTimer, 0, 1);
 
@@ -111,7 +111,7 @@ namespace LD48.Components
                     LookAt(this.player.LureEnd);
                 }
 
-                if (this.player.IsAiming)
+                if (this.player.IsAiming && !this.player.IsLureDeployed)
                 {
                     LookAt(this.player.MousePos);
                 }
