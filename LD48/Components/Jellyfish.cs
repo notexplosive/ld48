@@ -11,6 +11,8 @@ namespace LD48.Components
     class Jellyfish : BaseComponent
     {
         private readonly Fish fish;
+        private bool hasEnded;
+
         public float HitTimer
         {
             get; private set;
@@ -19,6 +21,7 @@ namespace LD48.Components
         public Jellyfish(Actor actor, LevelTransition transition) : base(actor)
         {
             this.fish = RequireComponent<Fish>();
+            this.hasEnded = false;
             transition.onFallAsleep += RunAwayAndDie;
         }
 
@@ -29,8 +32,12 @@ namespace LD48.Components
 
         private void RunAwayAndDie()
         {
-            this.fish.SetTargetOffset(new Vector2(5000, 0));
-            new DestroyTimer(this.actor, 10);
+            if (!this.hasEnded)
+            {
+                this.hasEnded = true;
+                this.fish.SetTargetOffset(new Vector2(5000, 0));
+                new DestroyTimer(this.actor, 10);
+            }
         }
 
         public void Hit()
