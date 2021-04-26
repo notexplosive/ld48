@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LD48
+namespace OculusLeviathan
 {
     public static class Program
     {

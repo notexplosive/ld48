@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LD48.Components
+namespace OculusLeviathan.Components
 {
     /// <summary>
     /// Thing the eye looks at, if there are none of these left then the level ends

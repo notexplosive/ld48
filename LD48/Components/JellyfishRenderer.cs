@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LD48.Components
+namespace OculusLeviathan.Components
 {
     class JellyfishRenderer : BaseComponent
     {

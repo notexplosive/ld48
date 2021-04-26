@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using Machina.Data;
 
-namespace LD48.Components
+namespace OculusLeviathan.Components
 {
     class BubbleSpawner : BaseComponent
     {

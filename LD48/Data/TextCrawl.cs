@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LD48.Data
+namespace OculusLeviathan.Data
 {
     public class TextCrawl
     {

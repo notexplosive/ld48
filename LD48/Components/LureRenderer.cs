@@ -1,4 +1,4 @@
-﻿using LD48.Data;
+﻿using OculusLeviathan.Data;
 using Machina.Components;
 using Machina.Data;
 using Machina.Engine;
@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LD48.Components
+namespace OculusLeviathan.Components
 {
     public enum Phase
     {

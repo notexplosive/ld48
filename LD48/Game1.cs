@@ -1,5 +1,5 @@
-﻿using LD48.Components;
-using LD48.Data;
+﻿using OculusLeviathan.Components;
+using OculusLeviathan.Data;
 using Machina.Components;
 using Machina.Data;
 using Machina.Engine;
@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace LD48
+namespace OculusLeviathan
 {
     public class Game1 : MachinaGame
     {
@@ -29,43 +29,134 @@ namespace LD48
             var bgActor = bgScene.AddActor("Background");
             new BackgroundRenderer(bgActor, gameScene.camera);
 
-            var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
+            var world = gameScene.AddActor("World");
+            new WorldStuff(world);
 
-            var levelIndex = 0;
-
-            var levelTransition = new LevelTransition(harness, levelIndex);
-            var player = new Player(harness);
-            new BubbleSpawner(harness, new MinMax<int>(3, 7));
-            new Harness(harness);
-
-            var eye = harness.transform.AddActorAsChild("Eye");
-            var eyeRenderer = new EyeRenderer(eye, player, levelTransition);
-
-            var targetReticalActor = gameScene.AddActor("Redical");
-            targetReticalActor.transform.Depth -= 20;
-            new TargetRedical(targetReticalActor, player);
-
+            void StartGame()
             {
-                var groupActor = uiScene.AddActor("UI Parent Group");
-                new BoundingRect(groupActor, uiScene.camera.ViewportWidth, uiScene.camera.ViewportHeight);
-                var grp = new LayoutGroup(groupActor, Orientation.Vertical);
+                var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
 
-                grp.PixelSpacer(32, (int) (uiScene.camera.ViewportHeight * 9f / 12f));
+                var levelIndex = 0;
 
-                grp.AddBothStretchedElement("TextGroupParent", act =>
+                var levelTransition = new LevelTransition(harness, levelIndex);
+                var player = new Player(harness);
+                new BubbleSpawner(harness, new MinMax<int>(3, 7));
+                new Harness(harness);
+
+                var eye = harness.transform.AddActorAsChild("Eye");
+                var eyeRenderer = new EyeRenderer(eye, player, levelTransition);
+
+                var targetReticalActor = gameScene.AddActor("Redical");
+                targetReticalActor.transform.Depth -= 20;
+                new TargetRedical(targetReticalActor, player);
+
                 {
-                    var textGroup = new LayoutGroup(act, Orientation.Horizontal);
-                    textGroup.HorizontallyStretchedSpacer();
-                    textGroup.AddVerticallyStretchedElement("Text", 900, act =>
+                    var groupActor = uiScene.AddActor("UI Parent Group");
+                    new BoundingRect(groupActor, uiScene.camera.ViewportWidth, uiScene.camera.ViewportHeight);
+                    var grp = new LayoutGroup(groupActor, Orientation.Vertical);
+
+                    grp.PixelSpacer(32, (int) (uiScene.camera.ViewportHeight * 9f / 12f));
+
+                    grp.AddBothStretchedElement("TextGroupParent", act =>
                     {
-                        new BoundedTextRenderer(act, "", MachinaGame.Assets.GetSpriteFont("Roboto"), Color.White, HorizontalAlignment.Left, VerticalAlignment.Top, Overflow.Ignore).EnableDropShadow(Color.Black);
-                        new TextCrawlRenderer(act, levelTransition);
+                        var textGroup = new LayoutGroup(act, Orientation.Horizontal);
+                        textGroup.HorizontallyStretchedSpacer();
+                        textGroup.AddVerticallyStretchedElement("Text", 900, act =>
+                        {
+                            new BoundedTextRenderer(act, "", MachinaGame.Assets.GetSpriteFont("Roboto"), Color.White, HorizontalAlignment.Left, VerticalAlignment.Top, Overflow.Ignore).EnableDropShadow(Color.Black);
+                            new TextCrawlRenderer(act, levelTransition);
+                        });
+                        textGroup.HorizontallyStretchedSpacer();
                     });
-                    textGroup.HorizontallyStretchedSpacer();
+
+                    grp.PixelSpacer(32, 32);
+                }
+            }
+
+
+
+
+            var menu = gameScene.AddActor("Main Menu");
+            new BoundingRect(menu, gameScene.camera.ViewportWidth, gameScene.camera.ViewportHeight);
+            var menuLayout = new LayoutGroup(menu, Orientation.Horizontal);
+
+            menuLayout.PixelSpacer(400);
+            menuLayout.AddBothStretchedElement("Menu Inner", innerGroupActor =>
+            {
+                var innerGroup = new LayoutGroup(innerGroupActor, Orientation.Vertical);
+
+                innerGroup.PixelSpacer(250);
+                var titleActGroup = innerGroup.AddHorizontallyStretchedElement("Title", 100, titleAct =>
+                {
+                    new BoundedTextRenderer(titleAct, "Oculus Leviathan", MachinaGame.Assets.GetSpriteFont("Roboto-Big"));
                 });
 
-                grp.PixelSpacer(32, 32);
-            }
+                innerGroup.AddHorizontallyStretchedElement("Subtitle", 64, subtitleAct =>
+                {
+                    // This was written hours before the deadline, it's spaghetti
+
+                    new BoundedTextRenderer(subtitleAct, "By NotExplosive\n\nThis game is played entirely with the mouse\nPress F4 to fullscreen\n\nMade for Ludum Dare 48 in 72 hours\nHold Left Mouse Button to begin", MachinaGame.Assets.GetSpriteFont("Roboto"));
+
+                    float mouseHeldTimer = 0;
+                    var mouseHeld = false;
+                    var totalTimer = 0f;
+                    var thresholdMet = false;
+
+                    var hoc = new AdHoc(subtitleAct);
+
+                    hoc.onMouseButton += (MouseButton button, Vector2 pos, ButtonState state) =>
+                    {
+                        mouseHeld = button == MouseButton.Left && state == ButtonState.Pressed;
+                    };
+
+                    hoc.onUpdate += (float dt) =>
+                    {
+                        if (!thresholdMet)
+                        {
+                            if (mouseHeld)
+                            {
+                                mouseHeldTimer += dt;
+                            }
+                            else
+                            {
+                                if (mouseHeldTimer > 0)
+                                {
+                                    mouseHeldTimer -= dt;
+                                }
+                            }
+
+
+                            gameScene.camera.Position = new Vector2(0, MathF.Sin(totalTimer) * 32);
+
+                            if (mouseHeldTimer > 3f)
+                            {
+                                subtitleAct.RemoveComponent<BoundedTextRenderer>();
+                                titleActGroup.actor.Destroy();
+                                thresholdMet = true;
+                            }
+                        }
+                        else
+                        {
+                            // if thresholdMet:
+                            mouseHeldTimer -= dt;
+
+                            if (mouseHeldTimer < 0)
+                            {
+                                menu.Destroy();
+                                StartGame();
+                            }
+                        }
+
+                        if (mouseHeldTimer > 0)
+                        {
+                            gameScene.camera.Zoom = 1 + EaseFuncs.CubicEaseIn(mouseHeldTimer) / 3;
+                        }
+
+                        totalTimer += dt;
+                    };
+                });
+            });
+            menuLayout.PixelSpacer(100);
 
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {

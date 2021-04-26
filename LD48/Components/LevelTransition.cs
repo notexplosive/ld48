@@ -1,4 +1,4 @@
-﻿using LD48.Data;
+﻿using OculusLeviathan.Data;
 using Machina.Components;
 using Machina.Data;
 using Machina.Engine;
@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LD48.Components
+namespace OculusLeviathan.Components
 {
     public class LevelTransition : BaseComponent
     {
@@ -36,7 +36,6 @@ namespace LD48.Components
 
         public Action onWakeUp;
         public Action onFallAsleep;
-        private SoundEffectInstance ambientSound;
 
         public LevelTransition(Actor actor, int levelIndex) : base(actor)
         {
@@ -45,20 +44,7 @@ namespace LD48.Components
 
             this.actor.scene.StartCoroutine(IntroCinematic(LevelDialogue.IntroSequence));
 
-            this.ambientSound = MachinaGame.Assets.GetSoundEffectInstance("underwater-ambience");
-            this.ambientSound.IsLooped = true;
-            this.ambientSound.Play();
-            this.ambientSound.Volume = 0.5f;
-
             this.levelIndex = levelIndex;
-        }
-
-        public override void OnKey(Keys key, ButtonState state, ModifierKeys modifiers)
-        {
-            if (key == Keys.F4 && modifiers.None && state == ButtonState.Released)
-            {
-                MachinaGame.Fullscreen = !MachinaGame.Fullscreen;
-            }
         }
 
         private IEnumerator<ICoroutineAction> IntroCinematic(string[] strings)
@@ -122,8 +108,6 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
-            this.ambientSound.Pitch = this.actor.scene.TimeScale - 1;
-
             this.levelTransitionTween.Update(dt);
             ProcessInput(dt);
             transform.Position += Velocity * dt * 60;

@@ -20,6 +20,13 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/Roboto.spritefont
 
+#begin fonts/Roboto-Big.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/Roboto-Big.spritefont
+
 #begin fonts/Roboto-Black.ttf
 /copy:fonts/Roboto-Black.ttf
 
