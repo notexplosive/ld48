@@ -52,6 +52,7 @@ namespace OculusLeviathan.Components
             var viewRect = new Rectangle(cam.Position.ToPoint(), new Point(cam.ViewportWidth, cam.ViewportHeight));
             if (!viewRect.Contains(this.actor.transform.Position.ToPoint()))
             {
+                this.actor.Destroy();
                 return;
             }
 

@@ -29,7 +29,7 @@ namespace OculusLeviathan.Data
 
             // Second to last level
             "We're reaching the depths where our instruments start to get finicky.\n\nThe specimen seems content, even under this much water pressure.",
-            "System is extremely unstable. I'm not sure how much longer it can last.",
+            "That depth reading doesn't look right...\nSystem is extremely unstable. I'm not sure how much longer it can last.\nI'm trying to raise the winch but the control isn't responding.",
         };
 
         public static string[] Ending = new string[] {

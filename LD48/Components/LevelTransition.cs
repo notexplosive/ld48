@@ -77,7 +77,7 @@ namespace OculusLeviathan.Components
         {
             yield return new WaitUntil(() => Velocity.Y == 0);
             yield return new WaitSeconds(0.25f);
-            yield return new WaitUntil(UntilTextCrawlIsFinished(string.Format("Depth: {0} meters.\n", CurrentDepth.ToString("n2")) + text));
+            yield return new WaitUntil(UntilTextCrawlIsFinished(string.Format("Depth: {0} meters. ({1}m from the bottom)\n", CurrentDepth.ToString("n2"), (10034f - CurrentDepth).ToString("n2")) + text));
             yield return new WaitUntil(UntilTextCrawlIsClosed());
             this.readyToStartLevel = true;
         }
@@ -144,27 +144,19 @@ namespace OculusLeviathan.Components
             var y = Velocity.Y;
             if (this.input.upward)
             {
-                y -= dt * 5;
+                y -= dt;
             }
 
             if (this.input.downward)
             {
-                y += dt * 5;
+                y += dt * 20;
             }
 
             if (this.input.None)
             {
-                if (y > 0)
-                {
-                    y -= dt * 5;
-                }
+                y *= 0.95f;
 
-                if (y < 0)
-                {
-                    y += dt * 5;
-                }
-
-                if (Math.Abs(y) < dt * 5)
+                if (y < 5)
                 {
                     y = 0;
                 }

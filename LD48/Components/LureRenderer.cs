@@ -110,11 +110,6 @@ namespace OculusLeviathan.Components
                     }
                 }
 
-                if (this.wasStunned)
-                {
-                    MachinaGame.Assets.GetSoundEffectInstance("snare").Play();
-                }
-
                 if (caughtFish)
                 {
                     MachinaGame.Assets.GetSoundEffectInstance("bass").Play();
@@ -155,13 +150,20 @@ namespace OculusLeviathan.Components
                 }
                 else
                 {
-
-
                     lureTween.AppendCallback(() =>
                     {
-                        var s = MachinaGame.Assets.GetSoundEffectInstance("snare");
-                        s.Pitch = 1f;
-                        s.Play();
+                        if (wasStunned)
+                        {
+                            var s = MachinaGame.Assets.GetSoundEffectInstance("snare");
+                            s.Pitch = -1f;
+                            s.Play();
+                        }
+                        else
+                        {
+                            var s = MachinaGame.Assets.GetSoundEffectInstance("snare");
+                            s.Pitch = 1f;
+                            s.Play();
+                        }
 
                         this.currentPhase = Phase.Retracting;
                         var rand = MachinaGame.Random.DirtyRandom;

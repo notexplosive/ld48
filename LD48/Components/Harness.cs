@@ -67,6 +67,10 @@ namespace OculusLeviathan.Components
                 {
                     this.currentWire = this.wires[wireIndex];
                 }
+                else
+                {
+                    this.currentWire = null;
+                }
             }
 
             var rand = MachinaGame.Random.DirtyRandom;
@@ -105,6 +109,12 @@ namespace OculusLeviathan.Components
                     Eye.Visible = false;
                     this.levelTransition.Asleep = true;
                     MachinaGame.Assets.GetSoundEffectInstance("cthulu-wins").Play();
+                    var rand = MachinaGame.Random.DirtyRandom;
+
+                    for (int i = 0; i < 300; i++)
+                    {
+                        this.bubbleSpawner.SpawnBubble(transform.Position + EyeLocalPos, new Vector2(rand.Next(-5, 5), rand.Next(-5, 20)), (float) rand.NextDouble() / 2);
+                    }
                 });
                 this.disconnectTween.AppendFloatTween(0, 0.25f, EaseFuncs.EaseInOutBack, acc);
                 this.disconnectTween.AppendWaitTween(0.5f);
@@ -152,7 +162,7 @@ namespace OculusLeviathan.Components
             // chain
             for (int i = 0; i < 15; i++)
             {
-                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24), 12), 12, Color.White, lineThickness, transform.Depth);
+                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 36), 12), 12, Color.White, lineThickness, transform.Depth);
             }
 
 

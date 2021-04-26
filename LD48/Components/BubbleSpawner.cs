@@ -23,7 +23,6 @@ namespace OculusLeviathan.Components
         {
             var bubble = this.actor.scene.AddActor("bubble");
             new Bubble(bubble, MachinaGame.Random.DirtyRandom.Next(this.bubbleSize.min, this.bubbleSize.max), startingVel, delay);
-            new DestroyTimer(bubble, 3);
             MachinaGame.Random.DirtyRandom.NextUnitVector(out Vector2 offset);
             bubble.transform.Position = pos + offset * MachinaGame.Random.DirtyRandom.Next(5);
         }

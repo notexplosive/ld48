@@ -21,13 +21,19 @@ namespace OculusLeviathan
         protected override void OnGameLoad()
         {
             var bgScene = SceneLayers.AddNewScene();
+            var bgScene2 = SceneLayers.AddNewScene();
+            var bgScene3 = SceneLayers.AddNewScene();
+
+
             var gameScene = SceneLayers.AddNewScene();
             var uiScene = SceneLayers.AddNewScene();
             // SceneLayers.BackgroundColor = Color.Black;
 
-
             var bgActor = bgScene.AddActor("Background");
-            new BackgroundRenderer(bgActor, gameScene.camera);
+            new BackgroundRenderer(bgActor, gameScene.camera, 0.6f);
+
+            var bgActor2 = bgScene2.AddActor("Background");
+            new BackgroundRenderer(bgActor2, gameScene.camera, 1f);
 
             var world = gameScene.AddActor("World");
             new WorldStuff(world);
@@ -36,7 +42,7 @@ namespace OculusLeviathan
             {
                 var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
 
-                var levelIndex = 0;
+                var levelIndex = 10;
 
                 var levelTransition = new LevelTransition(harness, levelIndex);
                 var player = new Player(harness);
@@ -95,7 +101,7 @@ namespace OculusLeviathan
                 {
                     // This was written hours before the deadline, it's spaghetti
 
-                    new BoundedTextRenderer(subtitleAct, "By NotExplosive\n\nThis game is played entirely with the mouse\nPress F4 to fullscreen\n\nMade for Ludum Dare 48 in 72 hours\nHold Left Mouse Button to begin", MachinaGame.Assets.GetSpriteFont("Roboto"));
+                    new BoundedTextRenderer(subtitleAct, "By NotExplosive\n\nThis game is played entirely with the mouse\nPress F4 to fullscreen\n\nMade for Ludum Dare 48 in 72 hours\nHOLD Left Mouse Button to begin", MachinaGame.Assets.GetSpriteFont("Roboto"));
 
                     float mouseHeldTimer = 0;
                     var mouseHeld = false;

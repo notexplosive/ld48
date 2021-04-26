@@ -13,8 +13,9 @@ namespace OculusLeviathan.Components
     {
         private readonly Camera foregroundCamera;
         private readonly CircleF[] points;
+        private float scrollFactor;
 
-        public BackgroundRenderer(Actor actor, Camera foregroundCamera) : base(actor)
+        public BackgroundRenderer(Actor actor, Camera foregroundCamera, float scrollFactor) : base(actor)
         {
             this.foregroundCamera = foregroundCamera;
             this.points = new CircleF[32];
@@ -25,9 +26,11 @@ namespace OculusLeviathan.Components
             for (int i = 0; i < 32; i++)
             {
 
-                this.points[i] = new CircleF(new Point(RandomX, rand.Next(0, camera.ViewportHeight)), rand.Next(50, 70));
+                var edge = (int) (camera.ViewportHeight / camera.Zoom);
+                this.points[i] = new CircleF(new Point(RandomX, rand.Next(-edge * 2, edge * 2)), rand.Next(50, 70));
             }
 
+            this.scrollFactor = scrollFactor;
         }
 
         public int RandomX
@@ -45,16 +48,21 @@ namespace OculusLeviathan.Components
         {
             var camera = this.actor.scene.camera;
 
-            camera.Position = new Vector2(0, foregroundCamera.Position.Y / 2);
-            camera.Zoom = foregroundCamera.Zoom;
+            camera.Position = new Vector2(0, foregroundCamera.Position.Y / 2 * this.scrollFactor);
+            camera.Zoom = foregroundCamera.Zoom * this.scrollFactor;
             var rand = MachinaGame.Random.DirtyRandom;
 
 
             for (int i = 0; i < 32; i++)
             {
-                if (points[i].Position.Y < camera.Position.Y - points[i].Radius)
+                var cameraCenter = camera.Position.Y + camera.ViewportCenter.Y;
+                var edgeDisplacement = camera.ViewportHeight / 2 / camera.Zoom;
+                var topEdge = cameraCenter - edgeDisplacement;
+                var bottomEdge = cameraCenter + edgeDisplacement;
+
+                if (points[i].Position.Y < topEdge - points[i].Radius)
                 {
-                    points[i].Position = new Point(RandomX, (int) camera.Position.Y + camera.ViewportHeight + (int) points[i].Radius);
+                    points[i].Position = new Point(RandomX, (int) (bottomEdge + (bottomEdge / 4 * (float) MachinaGame.Random.DirtyRandom.NextDouble())) + (int) points[i].Radius);
                     points[i].Radius -= 2;
                 }
             }
@@ -65,7 +73,7 @@ namespace OculusLeviathan.Components
         public override void Draw(SpriteBatch spriteBatch)
         {
             var camera = this.actor.scene.camera;
-            float depth = (camera.Position.Y - camera.ViewportHeight * 10) / ((float) camera.ViewportHeight * 20);
+            float depth = (camera.Position.Y - camera.ViewportHeight * 20) / ((float) camera.ViewportHeight * 30);
             depth = Math.Clamp(depth, 0f, 1f);
             float inverseDepth = 1f - depth;
 
