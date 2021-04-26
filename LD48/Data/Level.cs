@@ -59,14 +59,6 @@ namespace LD48.Data
 
             new Level
             {
-                // Seaweed -> Medium
-                FishCount = 3,
-                FishStats = FishStats.mediumLinger,
-                Seaweed = SeaweedInfo.forest
-            },
-
-            new Level
-            {
                 // Seaweed -> Medium 2
                 FishCount = 6,
                 FishStats = FishStats.easyChonkers,
@@ -102,21 +94,12 @@ namespace LD48.Data
                 JellyfishCount = 6
             },
 
-            new Level
-            {
-                // Jellyfish - Hard
-                // Lots of jellyfish, finding the fish is challenging but otherwise easy
-                FishCount = 5,
-                FishStats = FishStats.tinyErratic,
-                JellyfishCount = 5,
-            },
-
             // MIXTURE
 
             new Level
             {
                 FishCount = 5,
-                FishStats = FishStats.tinyErratic,
+                FishStats = FishStats.mediumLinger,
                 Seaweed = SeaweedInfo.forest,
                 JellyfishCount = 1,
                 DamagedHarness = true,

@@ -28,8 +28,8 @@ namespace LD48.Data
             "Scans show a deep sea creature that agitates the specimen similar to how certain plant life does. This indicates that there may be more weaknesses to discover.",
 
             // Second to last level
-            "We're reaching the depths where our instruments start to get finicky.\n\nWe still have basic vitals on the specimen but that's about it. The specimen seems content, even under this much water pressure.",
-            "System is extremely unstable, I'm not sure how much longer it can last.",
+            "We're reaching the depths where our instruments start to get finicky.\n\nThe specimen seems content, even under this much water pressure.",
+            "System is extremely unstable. I'm not sure how much longer it can last.",
         };
 
         public static string Ending = "The specimen has been disconnected from the harness.\n\nIt has escaped into the Mariana Trench.\nBack where it came from.";
