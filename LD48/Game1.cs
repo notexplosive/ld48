@@ -21,19 +21,48 @@ namespace LD48
         {
             var bgScene = SceneLayers.AddNewScene();
             var gameScene = SceneLayers.AddNewScene();
-            SceneLayers.BackgroundColor = Color.Black;
+            var uiScene = SceneLayers.AddNewScene();
+            // SceneLayers.BackgroundColor = Color.Black;
+
 
             var bgActor = bgScene.AddActor("Background");
             new BackgroundRenderer(bgActor, gameScene.camera);
 
+
+
             var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, -256));
-            new LevelTransition(eye);
+            var levelTransition = new LevelTransition(eye);
             var player = new Player(eye);
             var eyeRenderer = new EyeRenderer(eye);
+
+
+
 
             var targetReticalActor = gameScene.AddActor("Redical");
             targetReticalActor.transform.Depth -= 20;
             new TargetRedical(targetReticalActor, player);
+
+            {
+                var groupActor = uiScene.AddActor("UI Parent Group");
+                new BoundingRect(groupActor, uiScene.camera.ViewportWidth, uiScene.camera.ViewportHeight);
+                var grp = new LayoutGroup(groupActor, Orientation.Vertical);
+
+                grp.PixelSpacer(32, (int) (uiScene.camera.ViewportHeight * 9f / 12f));
+
+                grp.AddBothStretchedElement("TextGroupParent", act =>
+                {
+                    var textGroup = new LayoutGroup(act, Orientation.Horizontal);
+                    textGroup.HorizontallyStretchedSpacer();
+                    textGroup.AddVerticallyStretchedElement("Text", 900, act =>
+                    {
+                        new BoundedTextRenderer(act, "", MachinaGame.Assets.GetSpriteFont("Roboto"), Color.White, HorizontalAlignment.Left, VerticalAlignment.Top, Overflow.Ignore).EnableDropShadow(Color.Black);
+                        new TextCrawlRenderer(act, levelTransition);
+                    });
+                    textGroup.HorizontallyStretchedSpacer();
+                });
+
+                grp.PixelSpacer(32, 32);
+            }
 
             CommandLineArgs.RegisterFlagArg("edit", () =>
             {

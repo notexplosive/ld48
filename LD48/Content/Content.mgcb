@@ -13,3 +13,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin fonts/Roboto.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/Roboto.spritefont
+
+#begin fonts/Roboto-Black.ttf
+/copy:fonts/Roboto-Black.ttf
+

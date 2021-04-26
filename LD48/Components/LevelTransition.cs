@@ -4,6 +4,7 @@ using Machina.Data;
 using Machina.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +18,10 @@ namespace LD48.Components
         private bool readyToStartLevel;
         public bool IsInLevelTransition => !this.levelTransitionTween.IsFinished || Asleep;
         private int levelIndex = 0;
+        public TextCrawl CurrentTextCrawl
+        {
+            get; private set;
+        }
 
         public bool Asleep
         {
@@ -35,15 +40,50 @@ namespace LD48.Components
             Velocity = Vector2.Zero;
             this.levelTransitionTween = new TweenChain();
 
-            // Intro
-            this.levelTransitionTween.AppendWaitTween(1);
+            this.actor.scene.StartCoroutine(IntroCinematic(LevelDialogue.IntroSequence));
+        }
+
+        private IEnumerator<ICoroutineAction> IntroCinematic(string[] strings)
+        {
+            yield return new WaitUntil(UntilTextCrawlIsFinished(strings[0]));
+            yield return new WaitUntil(UntilTextCrawlIsClosed());
+
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = true; });
             this.levelTransitionTween.AppendWaitTween(2);
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
-            this.levelTransitionTween.AppendCallback(() =>
+
+            yield return new WaitUntil(() => Velocity.Y == 0);
+            this.levelTransitionTween.Clear();
+
+            yield return new WaitSeconds(0.25f);
+
+            for (int i = 1; i < strings.Length; i++)
             {
-                this.readyToStartLevel = true;
-            });
+                yield return new WaitUntil(UntilTextCrawlIsFinished(strings[i]));
+                yield return new WaitUntil(UntilTextCrawlIsClosed());
+            }
+
+            this.readyToStartLevel = true;
+        }
+
+        private IEnumerator<ICoroutineAction> BetweenLevelDialogue(string text)
+        {
+            yield return new WaitUntil(() => Velocity.Y == 0);
+            yield return new WaitSeconds(0.25f);
+            yield return new WaitUntil(UntilTextCrawlIsFinished(text));
+            yield return new WaitUntil(UntilTextCrawlIsClosed());
+            this.readyToStartLevel = true;
+        }
+
+        private Func<bool> UntilTextCrawlIsClosed()
+        {
+            return () => CurrentTextCrawl == null;
+        }
+
+        private Func<bool> UntilTextCrawlIsFinished(string text)
+        {
+            CurrentTextCrawl = new TextCrawl(text);
+            return () => CurrentTextCrawl.IsFinished;
         }
 
         public override void Update(float dt)
@@ -56,7 +96,26 @@ namespace LD48.Components
             {
                 this.readyToStartLevel = false;
                 StartNextLevel();
-                WakeUp();
+            }
+
+            CurrentTextCrawl?.Update(dt);
+        }
+
+        public override void OnMouseButton(MouseButton button, Vector2 currentPosition, ButtonState state)
+        {
+            if (state == ButtonState.Pressed)
+            {
+                if (CurrentTextCrawl != null)
+                {
+                    if (!CurrentTextCrawl.IsFinished)
+                    {
+                        CurrentTextCrawl.SkipToEnd();
+                    }
+                    else
+                    {
+                        CurrentTextCrawl = null;
+                    }
+                }
             }
         }
 
@@ -104,7 +163,15 @@ namespace LD48.Components
             this.levelTransitionTween.AppendCallback(() => { this.input.downward = false; });
             this.levelTransitionTween.AppendCallback(() =>
             {
-                this.readyToStartLevel = true;
+                var dialogueIndex = this.levelIndex - 1;
+                if (dialogueIndex < LevelDialogue.ForLevels.Length)
+                {
+                    this.actor.scene.StartCoroutine(BetweenLevelDialogue(LevelDialogue.ForLevels[dialogueIndex]));
+                }
+                else
+                {
+                    this.readyToStartLevel = true;
+                }
             });
         }
 
@@ -143,6 +210,7 @@ namespace LD48.Components
                 MachinaGame.Print("Finished!");
             }
 
+            WakeUp();
         }
 
         private void WakeUp()
