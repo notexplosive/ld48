@@ -38,7 +38,7 @@ namespace LD48.Components
         public Action onFallAsleep;
         private SoundEffectInstance ambientSound;
 
-        public LevelTransition(Actor actor) : base(actor)
+        public LevelTransition(Actor actor, int levelIndex) : base(actor)
         {
             Velocity = Vector2.Zero;
             this.levelTransitionTween = new TweenChain();
@@ -49,6 +49,8 @@ namespace LD48.Components
             this.ambientSound.IsLooped = true;
             this.ambientSound.Play();
             this.ambientSound.Volume = 0.5f;
+
+            this.levelIndex = levelIndex;
         }
 
         public override void OnKey(Keys key, ButtonState state, ModifierKeys modifiers)

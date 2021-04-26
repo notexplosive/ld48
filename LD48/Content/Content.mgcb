@@ -53,6 +53,12 @@
 /processorParam:Quality=Best
 /build:sounds/long_note.ogg
 
+#begin sounds/muted-boom.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/muted-boom.ogg
+
 #begin sounds/snare.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor

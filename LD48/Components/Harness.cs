@@ -87,7 +87,9 @@ namespace LD48.Components
         {
             var acc = new TweenAccessors<float>(() => this.disconnectOffset, val => this.disconnectOffset = val);
 
-            MachinaGame.Assets.GetSoundEffectInstance("bass").Play();
+            MachinaGame.Assets.GetSoundEffectInstance("muted-boom").Stop();
+            MachinaGame.Assets.GetSoundEffectInstance("muted-boom").Volume = 0.5f;
+            MachinaGame.Assets.GetSoundEffectInstance("muted-boom").Play();
 
             if (this.hurtCounter < this.wires.Length)
             {

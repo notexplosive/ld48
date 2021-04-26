@@ -30,7 +30,10 @@ namespace LD48
             new BackgroundRenderer(bgActor, gameScene.camera);
 
             var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
-            var levelTransition = new LevelTransition(harness);
+
+            var levelIndex = 0;
+
+            var levelTransition = new LevelTransition(harness, levelIndex);
             var player = new Player(harness);
             new BubbleSpawner(harness, new MinMax<int>(3, 7));
             new Harness(harness);
