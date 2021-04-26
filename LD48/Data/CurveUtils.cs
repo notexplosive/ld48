@@ -62,7 +62,7 @@ namespace LD48.Data
             }
         }
 
-        public Vector2 GetPointAt(float progress)
+        public Vector2 GetPointAlong(float progress)
         {
             return Vector2.CatmullRom(this.pullStart, this.start, this.end, this.pullEnd, progress);
         }

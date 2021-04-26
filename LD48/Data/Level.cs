@@ -11,16 +11,16 @@ namespace LD48.Data
         public int JellyfishCount;
         public FishStats FishStats;
         public SeaweedInfo[] Seaweed = Array.Empty<SeaweedInfo>();
+        public bool DamagedHarness;
 
         public static readonly Level[] All = new Level[]
         {
-
-
             new Level
             {
                 // First level
                 FishCount = 3,
                 FishStats = FishStats.extremelyEasy,
+                DamagedHarness = true,
             },
 
             // SMALL FISH

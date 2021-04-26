@@ -33,6 +33,7 @@ namespace LD48
             var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, -256));
             var levelTransition = new LevelTransition(eye);
             var player = new Player(eye);
+            new HarnessRenderer(eye);
             var eyeRenderer = new EyeRenderer(eye);
 
 
