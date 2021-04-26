@@ -31,6 +31,8 @@ namespace OculusLeviathan.Components
             }
 
             this.scrollFactor = scrollFactor;
+
+            this.actor.scene.sceneLayers.BackgroundColor = GetBGColor(0.01f, 0.01f, 0.1f, 1);
         }
 
         public int RandomX

@@ -15,11 +15,12 @@ namespace OculusLeviathan
     {
         public Game1(string[] args) : base("LD48", args, new Point(1920, 1080), new Point(1920 / 2, 1080 / 2), ResizeBehavior.MaintainDesiredResolution)
         {
-
         }
 
         protected override void OnGameLoad()
         {
+            MachinaGame.Fullscreen = true;
+
             var bgScene = SceneLayers.AddNewScene();
             var bgScene2 = SceneLayers.AddNewScene();
             var bgScene3 = SceneLayers.AddNewScene();
@@ -35,14 +36,11 @@ namespace OculusLeviathan
             var bgActor2 = bgScene2.AddActor("Background");
             new BackgroundRenderer(bgActor2, gameScene.camera, 1f);
 
-            var world = gameScene.AddActor("World");
-            new WorldStuff(world);
-
             void StartGame()
             {
                 var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
 
-                var levelIndex = 10;
+                var levelIndex = 0;
 
                 var levelTransition = new LevelTransition(harness, levelIndex);
                 var player = new Player(harness);
@@ -79,8 +77,8 @@ namespace OculusLeviathan
                 }
             }
 
-
-
+            var world = gameScene.AddActor("World");
+            new WorldStuff(world);
 
             var menu = gameScene.AddActor("Main Menu");
             new BoundingRect(menu, gameScene.camera.ViewportWidth, gameScene.camera.ViewportHeight);
@@ -101,7 +99,7 @@ namespace OculusLeviathan
                 {
                     // This was written hours before the deadline, it's spaghetti
 
-                    new BoundedTextRenderer(subtitleAct, "By NotExplosive\n\nThis game is played entirely with the mouse\nPress F4 to fullscreen\n\nMade for Ludum Dare 48 in 72 hours\nHOLD Left Mouse Button to begin", MachinaGame.Assets.GetSpriteFont("Roboto"));
+                    new BoundedTextRenderer(subtitleAct, "By NotExplosive\n\nThis game is played entirely with the mouse\nPress F4 to toggle fullscreen\n\nMade for Ludum Dare 48 in 72 hours\nHOLD Left Mouse Button to begin", MachinaGame.Assets.GetSpriteFont("Roboto"));
 
                     float mouseHeldTimer = 0;
                     var mouseHeld = false;
@@ -134,7 +132,7 @@ namespace OculusLeviathan
 
                             gameScene.camera.Position = new Vector2(0, MathF.Sin(totalTimer) * 32);
 
-                            if (mouseHeldTimer > 3f)
+                            if (mouseHeldTimer > 1f)
                             {
                                 subtitleAct.RemoveComponent<BoundedTextRenderer>();
                                 titleActGroup.actor.Destroy();
@@ -155,7 +153,7 @@ namespace OculusLeviathan
 
                         if (mouseHeldTimer > 0)
                         {
-                            gameScene.camera.Zoom = 1 + EaseFuncs.CubicEaseIn(mouseHeldTimer) / 3;
+                            gameScene.camera.Zoom = 1 + EaseFuncs.CubicEaseOut(mouseHeldTimer) / 3;
                         }
 
                         totalTimer += dt;
