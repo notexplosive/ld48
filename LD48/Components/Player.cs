@@ -14,6 +14,7 @@ namespace LD48.Components
     public class Player : BaseComponent
     {
         private Actor lure;
+
         public bool IsAiming
         {
             get; private set;
@@ -104,7 +105,7 @@ namespace LD48.Components
                 this.lure.transform.Position = targetPosition;
                 this.lure.transform.LocalDepth = -1;
                 new BubbleSpawner(this.lure, new Machina.Data.MinMax<int>(7, 14));
-                new LureRenderer(this.lure, this, this.actor.GetComponent<EyeRenderer>());
+                new LureRenderer(this.lure, this, this.actor.GetComponentsInImmediateChildren<EyeRenderer>()[0]);
             }
         }
 

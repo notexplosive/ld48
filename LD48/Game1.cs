@@ -30,14 +30,13 @@ namespace LD48
 
 
 
-            var eye = gameScene.AddActor("Eye", new Vector2(gameScene.camera.ViewportCenter.X, -256));
-            var levelTransition = new LevelTransition(eye);
-            var player = new Player(eye);
-            new HarnessRenderer(eye);
-            var eyeRenderer = new EyeRenderer(eye);
+            var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
+            var levelTransition = new LevelTransition(harness);
+            var player = new Player(harness);
+            new HarnessRenderer(harness);
 
-
-
+            var eye = harness.transform.AddActorAsChild("Eye");
+            var eyeRenderer = new EyeRenderer(eye, player, levelTransition);
 
             var targetReticalActor = gameScene.AddActor("Redical");
             targetReticalActor.transform.Depth -= 20;

@@ -32,10 +32,10 @@ namespace LD48.Components
             this.lookTarget = target;
         }
 
-        public EyeRenderer(Actor actor) : base(actor)
+        public EyeRenderer(Actor actor, Player player, LevelTransition levelTransition) : base(actor)
         {
-            this.player = RequireComponent<Player>();
-            this.levelTransition = RequireComponent<LevelTransition>();
+            this.player = player;
+            this.levelTransition = levelTransition;
             this.levelTransition.onWakeUp += WakeUpAnimation;
             this.levelTransition.onFallAsleep += FallAsleepAnimation;
 
