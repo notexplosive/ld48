@@ -44,6 +44,14 @@ namespace LD48.Components
             this.actor.scene.StartCoroutine(IntroCinematic(LevelDialogue.IntroSequence));
         }
 
+        public override void OnKey(Keys key, ButtonState state, ModifierKeys modifiers)
+        {
+            if (key == Keys.F4 && modifiers.None && state == ButtonState.Released)
+            {
+                MachinaGame.Fullscreen = true;
+            }
+        }
+
         private IEnumerator<ICoroutineAction> IntroCinematic(string[] strings)
         {
             yield return new WaitUntil(UntilTextCrawlIsFinished(strings[0]));
@@ -80,13 +88,15 @@ namespace LD48.Components
 
         public IEnumerator<ICoroutineAction> EndingSequence()
         {
-            yield return new WaitUntil(UntilTextCrawlIsFinished(LevelDialogue.Ending));
-            yield return new WaitUntil(UntilTextCrawlIsClosed());
+            foreach (var text in LevelDialogue.Ending)
+            {
+                yield return new WaitUntil(UntilTextCrawlIsFinished(text));
+                yield return new WaitUntil(UntilTextCrawlIsClosed());
 
-            this.input.upward = true;
+                this.input.upward = true;
+            }
 
-            yield return new WaitUntil(UntilTextCrawlIsFinished("The end"));
-            yield return new WaitUntil(UntilTextCrawlIsClosed());
+            MachinaGame.Quit();
         }
 
         private Func<bool> UntilTextCrawlIsClosed()

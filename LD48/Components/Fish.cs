@@ -84,6 +84,11 @@ namespace LD48.Components
                     this.actor.Destroy();
                 }
             }
+
+            if (key == Keys.Space && modifiers.ControlShift)
+            {
+                this.actor.Destroy();
+            }
         }
     }
 }

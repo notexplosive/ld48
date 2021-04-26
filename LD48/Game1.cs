@@ -13,7 +13,7 @@ namespace LD48
 {
     public class Game1 : MachinaGame
     {
-        public Game1(string[] args) : base("LD48", args, new Point(1600, 900), new Point(1600, 900), ResizeBehavior.MaintainDesiredResolution)
+        public Game1(string[] args) : base("LD48", args, new Point(1920, 1080), new Point(1920 / 2, 1080 / 2), ResizeBehavior.MaintainDesiredResolution)
         {
 
         }
@@ -28,8 +28,6 @@ namespace LD48
 
             var bgActor = bgScene.AddActor("Background");
             new BackgroundRenderer(bgActor, gameScene.camera);
-
-
 
             var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
             var levelTransition = new LevelTransition(harness);
