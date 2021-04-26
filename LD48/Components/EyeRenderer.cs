@@ -168,7 +168,7 @@ namespace LD48.Components
             // chain
             for (int i = 0; i < 15; i++)
             {
-                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24 * Math.Max(1, -this.levelTransition.Velocity.Y / 20 + 1)), 12), 12, Color.White, lineThickness, transform.Depth);
+                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24), 12), 12, Color.White, lineThickness, transform.Depth);
             }
 
             spriteBatch.DrawCircle(new CircleF(IrisCenter, 10 * this.openPercent + 10 * EaseFuncs.CubicEaseOut(this.aimTimer) * this.openPercent), 15, Color.White, lineThickness, transform.Depth);

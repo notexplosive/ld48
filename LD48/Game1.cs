@@ -1,6 +1,7 @@
 ﻿using LD48.Components;
 using LD48.Data;
 using Machina.Components;
+using Machina.Data;
 using Machina.Engine;
 using Machina.ThirdParty;
 using Microsoft.Xna.Framework;
@@ -33,6 +34,7 @@ namespace LD48
             var harness = gameScene.AddActor("Harness", new Vector2(gameScene.camera.ViewportCenter.X, -256));
             var levelTransition = new LevelTransition(harness);
             var player = new Player(harness);
+            new BubbleSpawner(harness, new MinMax<int>(3, 7));
             new HarnessRenderer(harness);
 
             var eye = harness.transform.AddActorAsChild("Eye");
@@ -80,7 +82,7 @@ namespace LD48
         public static void SpawnNewFish(Scene gameScene, Vector2 position, Player player, FishStats stats)
         {
             var fishActor = gameScene.AddActor("Fish", position);
-            new BubbleSpawner(fishActor, new Machina.Data.MinMax<int>(5, 10));
+            new BubbleSpawner(fishActor, new MinMax<int>(5, 10));
             new TimeAccumulator(fishActor);
             new Fish(fishActor, player.transform, stats);
             new ResetTargetOffsetPeriodically(fishActor);

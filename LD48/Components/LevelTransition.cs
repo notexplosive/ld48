@@ -18,6 +18,7 @@ namespace LD48.Components
         private bool readyToStartLevel;
         public bool IsInLevelTransition => !this.levelTransitionTween.IsFinished || Asleep;
         private int levelIndex = 0;
+        public Level CurrentLevel => this.levelIndex > 0 ? Level.All[this.levelIndex - 1] : Level.All[this.levelIndex];
         public TextCrawl CurrentTextCrawl
         {
             get; private set;

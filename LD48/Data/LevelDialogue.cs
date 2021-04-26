@@ -7,9 +7,9 @@ namespace LD48.Data
     public class LevelDialogue
     {
         public static string[] IntroSequence = new string[] {
-            "Approaching 1km depth marker...",
+            "Mariana Trench, West Pacific Ocean\n1000.00m below sea level.",
             "Specimen is in position.\nHalting sedative agent.",
-            "Signal strength: Strong\nSpecimen condition: Normal\nReady to begin test, waiting for specimen to wake up." };
+            "Signal strength: Strong\nSpecimen status: Normal\nReady to begin test once the specimen wakes up." };
 
         public static string[] ForLevels = new string[]
         {
@@ -33,7 +33,7 @@ namespace LD48.Data
             "Just a little more...",
 
             // Finale
-            "The specimen has been disconnected from the winch. It has escaped into the Marianas Trench...\n\nBack where it came from."
+            "The specimen has been disconnected from the winch. It has escaped into the Mariana Trench...\n\nBack where it came from."
         };
     }
 }

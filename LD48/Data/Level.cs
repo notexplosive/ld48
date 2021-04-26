@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LD48.Data
 {
-    class Level
+    public class Level
     {
         public int FishCount = 1;
         public int JellyfishCount;
