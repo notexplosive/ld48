@@ -66,11 +66,13 @@ namespace LD48.Components
             this.readyToStartLevel = true;
         }
 
+        public float CurrentDepth => (float) this.levelIndex / Level.All.Length * 10034f + 1000f;
+
         private IEnumerator<ICoroutineAction> BetweenLevelDialogue(string text)
         {
             yield return new WaitUntil(() => Velocity.Y == 0);
             yield return new WaitSeconds(0.25f);
-            yield return new WaitUntil(UntilTextCrawlIsFinished(text));
+            yield return new WaitUntil(UntilTextCrawlIsFinished(string.Format("Depth: {0} meters.\n", CurrentDepth.ToString("n2")) + text));
             yield return new WaitUntil(UntilTextCrawlIsClosed());
             this.readyToStartLevel = true;
         }
