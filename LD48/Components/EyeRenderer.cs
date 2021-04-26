@@ -159,17 +159,7 @@ namespace LD48.Components
             // Main body circle
             spriteBatch.DrawCircle(new CircleF(transform.Position, 150), MachinaGame.Random.DirtyRandom.Next(25, 35), Color.White, lineThickness, transform.Depth);
 
-            // coil attached to eye
-            for (int i = 0; i < 5; i++)
-            {
-                spriteBatch.DrawCircle(new CircleF(transform.Position - new Vector2(0, 150 + i * 12), 12), 12, Color.White, lineThickness, transform.Depth);
-            }
 
-            // chain
-            for (int i = 0; i < 15; i++)
-            {
-                spriteBatch.DrawCircle(new CircleF(transform.Position + new Vector2(0, -300 - i * 24), 12), 12, Color.White, lineThickness, transform.Depth);
-            }
 
             spriteBatch.DrawCircle(new CircleF(IrisCenter, 10 * this.openPercent + 10 * EaseFuncs.CubicEaseOut(this.aimTimer) * this.openPercent), 15, Color.White, lineThickness, transform.Depth);
         }

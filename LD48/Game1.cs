@@ -35,7 +35,7 @@ namespace LD48
             var levelTransition = new LevelTransition(harness);
             var player = new Player(harness);
             new BubbleSpawner(harness, new MinMax<int>(3, 7));
-            new HarnessRenderer(harness);
+            new Harness(harness);
 
             var eye = harness.transform.AddActorAsChild("Eye");
             var eyeRenderer = new EyeRenderer(eye, player, levelTransition);

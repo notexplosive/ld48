@@ -53,7 +53,7 @@ namespace LD48.Components
                 this.actor.scene.TimeScale = 1f;
             }
 
-            if (this.CandidateTargets.Count == 0 && !this.levelTransition.IsInLevelTransition && IsPlayingButIdle)
+            if (this.CandidateTargets.Count == 0 && !this.levelTransition.IsInLevelTransition && IsPlayingButIdle && !this.levelTransition.CurrentLevel.HarnessVulnerable)
             {
                 this.levelTransition.FinishLevel(4);
             }
@@ -105,7 +105,7 @@ namespace LD48.Components
                 this.lure.transform.Position = targetPosition;
                 this.lure.transform.LocalDepth = -1;
                 new BubbleSpawner(this.lure, new Machina.Data.MinMax<int>(7, 14));
-                new LureRenderer(this.lure, this, this.actor.GetComponentsInImmediateChildren<EyeRenderer>()[0]);
+                new LureRenderer(this.lure, this, this.actor.GetComponentsInImmediateChildren<EyeRenderer>()[0], this.levelTransition.CurrentLevel);
             }
         }
 

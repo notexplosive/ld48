@@ -1,4 +1,5 @@
-﻿using Machina.Components;
+﻿using LD48.Data;
+using Machina.Components;
 using Machina.Data;
 using Machina.Engine;
 using Machina.ThirdParty;
@@ -31,7 +32,7 @@ namespace LD48.Components
         private bool wasStunned;
         private readonly float lureSize = 10;
 
-        public LureRenderer(Actor actor, Player player, EyeRenderer eye) : base(actor)
+        public LureRenderer(Actor actor, Player player, EyeRenderer eye, Level currentLevel) : base(actor)
         {
             this.eye = eye;
             this.player = player;
@@ -43,6 +44,18 @@ namespace LD48.Components
             lureTween.AppendCallback(() =>
             {
                 var caughtFish = false;
+
+                if (currentLevel.HarnessVulnerable)
+                {
+                    foreach (var targetActor in actor.scene.GetAllActors())
+                    {
+                        var harness = targetActor.GetComponent<Harness>();
+                        if (harness != null && harness.HarnessRect.Contains(EndPos))
+                        {
+                            harness.TakeDamage();
+                        }
+                    }
+                }
 
                 foreach (var targetActor in actor.scene.GetAllActors())
                 {

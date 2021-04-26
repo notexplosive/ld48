@@ -78,6 +78,17 @@ namespace LD48.Components
             this.readyToStartLevel = true;
         }
 
+        public IEnumerator<ICoroutineAction> EndingSequence()
+        {
+            yield return new WaitUntil(UntilTextCrawlIsFinished(LevelDialogue.Ending));
+            yield return new WaitUntil(UntilTextCrawlIsClosed());
+
+            this.input.upward = true;
+
+            yield return new WaitUntil(UntilTextCrawlIsFinished("The end"));
+            yield return new WaitUntil(UntilTextCrawlIsClosed());
+        }
+
         private Func<bool> UntilTextCrawlIsClosed()
         {
             return () => CurrentTextCrawl == null;

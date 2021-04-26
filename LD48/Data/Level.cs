@@ -7,11 +7,13 @@ namespace LD48.Data
 {
     public class Level
     {
-        public int FishCount = 1;
+        public int FishCount;
         public int JellyfishCount;
         public FishStats FishStats;
         public SeaweedInfo[] Seaweed = Array.Empty<SeaweedInfo>();
         public bool DamagedHarness;
+        public bool HarnessVulnerable;
+
 
         public static readonly Level[] All = new Level[]
         {
@@ -20,7 +22,6 @@ namespace LD48.Data
                 // First level
                 FishCount = 3,
                 FishStats = FishStats.extremelyEasy,
-                DamagedHarness = true,
             },
 
             // SMALL FISH
@@ -118,10 +119,17 @@ namespace LD48.Data
                 FishStats = FishStats.tinyErratic,
                 Seaweed = SeaweedInfo.forest,
                 JellyfishCount = 1,
+                DamagedHarness = true,
             },
 
             // FINALE
-
+            new Level
+            {
+                // Final level
+                DamagedHarness = true,
+                HarnessVulnerable = true
+            },
         };
+
     }
 }
