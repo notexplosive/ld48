@@ -29,7 +29,7 @@ namespace LD48.Components
         {
             this.bubbleSpawner = RequireComponent<BubbleSpawner>();
             this.levelTransition = RequireComponent<LevelTransition>();
-            wires = new Wire[10];
+            wires = new Wire[7];
 
             this.disconnectTween = new TweenChain();
 
@@ -61,7 +61,12 @@ namespace LD48.Components
             if (this.wireTimer > 1)
             {
                 this.wireTimer = 0;
-                this.currentWire = this.wires[MachinaGame.Random.DirtyRandom.Next(this.wires.Length)];
+                var wireIndex = MachinaGame.Random.DirtyRandom.Next(10);
+
+                if (wireIndex < this.wires.Length)
+                {
+                    this.currentWire = this.wires[wireIndex];
+                }
             }
 
             var rand = MachinaGame.Random.DirtyRandom;
@@ -82,6 +87,8 @@ namespace LD48.Components
         {
             var acc = new TweenAccessors<float>(() => this.disconnectOffset, val => this.disconnectOffset = val);
 
+            MachinaGame.Assets.GetSoundEffectInstance("bass").Play();
+
             if (this.hurtCounter < this.wires.Length)
             {
                 this.wires[this.hurtCounter] = null;
@@ -95,6 +102,7 @@ namespace LD48.Components
                 {
                     Eye.Visible = false;
                     this.levelTransition.Asleep = true;
+                    MachinaGame.Assets.GetSoundEffectInstance("cthulu-wins").Play();
                 });
                 this.disconnectTween.AppendFloatTween(0, 0.25f, EaseFuncs.EaseInOutBack, acc);
                 this.disconnectTween.AppendWaitTween(0.5f);

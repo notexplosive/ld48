@@ -33,7 +33,7 @@ namespace LD48.Data
         };
 
         public static string[] Ending = new string[] {
-            "The specimen has been disconnected from the harness.\n\nIt has escaped into the Mariana Trench.",
+            "The specimen has disconnected itself from the harness.\n\nIt has escaped into the Mariana Trench.",
             "It has returned to where it came from.\nMaybe that's for the better.",
             "THE END\nThis game was made in 72 hours for Ludum Dare 48, by NotExplosive.\nFind more games like this one at notexplosive.net"
         };

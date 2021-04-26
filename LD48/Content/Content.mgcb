@@ -23,3 +23,51 @@
 #begin fonts/Roboto-Black.ttf
 /copy:fonts/Roboto-Black.ttf
 
+#begin sounds/bass.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/bass.ogg
+
+#begin sounds/cthulu-wins.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/cthulu-wins.ogg
+
+#begin sounds/frog_bass.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/frog_bass.ogg
+
+#begin sounds/key-click-single.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/key-click-single.ogg
+
+#begin sounds/long_note.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/long_note.ogg
+
+#begin sounds/snare.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/snare.ogg
+
+#begin sounds/underwater-ambience.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/underwater-ambience.ogg
+
+#begin sounds/underwater-loop.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/underwater-loop.ogg
+

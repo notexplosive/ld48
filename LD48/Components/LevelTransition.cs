@@ -3,6 +3,7 @@ using Machina.Components;
 using Machina.Data;
 using Machina.Engine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -35,6 +36,7 @@ namespace LD48.Components
 
         public Action onWakeUp;
         public Action onFallAsleep;
+        private SoundEffectInstance ambientSound;
 
         public LevelTransition(Actor actor) : base(actor)
         {
@@ -42,18 +44,24 @@ namespace LD48.Components
             this.levelTransitionTween = new TweenChain();
 
             this.actor.scene.StartCoroutine(IntroCinematic(LevelDialogue.IntroSequence));
+
+            this.ambientSound = MachinaGame.Assets.GetSoundEffectInstance("underwater-ambience");
+            this.ambientSound.IsLooped = true;
+            this.ambientSound.Play();
+            this.ambientSound.Volume = 0.5f;
         }
 
         public override void OnKey(Keys key, ButtonState state, ModifierKeys modifiers)
         {
             if (key == Keys.F4 && modifiers.None && state == ButtonState.Released)
             {
-                MachinaGame.Fullscreen = true;
+                MachinaGame.Fullscreen = !MachinaGame.Fullscreen;
             }
         }
 
         private IEnumerator<ICoroutineAction> IntroCinematic(string[] strings)
         {
+            yield return new WaitSeconds(1);
             yield return new WaitUntil(UntilTextCrawlIsFinished(strings[0]));
             yield return new WaitUntil(UntilTextCrawlIsClosed());
 
@@ -112,6 +120,8 @@ namespace LD48.Components
 
         public override void Update(float dt)
         {
+            this.ambientSound.Pitch = this.actor.scene.TimeScale - 1;
+
             this.levelTransitionTween.Update(dt);
             ProcessInput(dt);
             transform.Position += Velocity * dt * 60;

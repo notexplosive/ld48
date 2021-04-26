@@ -34,6 +34,9 @@ namespace LD48.Components
 
         public LureRenderer(Actor actor, Player player, EyeRenderer eye, Level currentLevel) : base(actor)
         {
+
+            MachinaGame.Assets.GetSoundEffectInstance("frog_bass").Play();
+
             this.eye = eye;
             this.player = player;
             this.bubbleSpawner = RequireComponent<BubbleSpawner>();
@@ -88,6 +91,7 @@ namespace LD48.Components
                     }
                 }
 
+
                 if (!caughtFish)
                 {
                     foreach (var targetActor in actor.scene.GetAllActors())
@@ -106,8 +110,15 @@ namespace LD48.Components
                     }
                 }
 
+                if (this.wasStunned)
+                {
+                    MachinaGame.Assets.GetSoundEffectInstance("snare").Play();
+                }
+
                 if (caughtFish)
                 {
+                    MachinaGame.Assets.GetSoundEffectInstance("bass").Play();
+
                     bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.1f);
                     bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.2f);
                     bubbleSpawner.SpawnBubble(EndPos, Vector2.Zero, 0.3f);
@@ -126,6 +137,7 @@ namespace LD48.Components
                         this.currentPhase = Phase.Retracting;
                         this.eye.ClearTween();
                         this.eye.TweenOpenAmountTo(2f, 0.1f);
+                        this.eye.TweenPlaySound("cthulu-wins");
                         this.eye.TweenOpenAmountTo(0f, 0.15f);
                         this.eye.TweenOpenAmountTo(0f, 0.2f); // Stay closed
                         this.eye.TweenOpenAmountTo(1f, 0.25f);
@@ -143,8 +155,14 @@ namespace LD48.Components
                 }
                 else
                 {
+
+
                     lureTween.AppendCallback(() =>
                     {
+                        var s = MachinaGame.Assets.GetSoundEffectInstance("snare");
+                        s.Pitch = 1f;
+                        s.Play();
+
                         this.currentPhase = Phase.Retracting;
                         var rand = MachinaGame.Random.DirtyRandom;
                         for (int i = 0; i < 3; i++)

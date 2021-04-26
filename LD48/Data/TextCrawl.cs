@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Machina.Engine;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,7 +24,17 @@ namespace LD48.Data
 
         public void Update(float dt)
         {
+            int oldIndex = (int) this.totalTime;
             this.totalTime += dt * 20;
+            int newIndex = (int) this.totalTime;
+
+            if (oldIndex != newIndex && !IsFinished && CurrentText.Substring(oldIndex, 1) != " ")
+            {
+                var s = MachinaGame.Assets.GetSoundEffectInstance("key-click-single");
+                s.Volume = 0.5f;
+                s.Pitch = (float) MachinaGame.Random.DirtyRandom.NextDouble();
+                s.Play();
+            }
         }
 
         public void SkipToEnd()

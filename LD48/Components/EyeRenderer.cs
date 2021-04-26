@@ -164,6 +164,16 @@ namespace LD48.Components
             spriteBatch.DrawCircle(new CircleF(IrisCenter, 10 * this.openPercent + 10 * EaseFuncs.CubicEaseOut(this.aimTimer) * this.openPercent), 15, Color.White, lineThickness, transform.Depth);
         }
 
+        public void TweenPlaySound(string v)
+        {
+            this.eyeTween.AppendCallback(() =>
+            {
+                var s = MachinaGame.Assets.GetSoundEffectInstance(v);
+                s.Stop();
+                s.Play();
+            });
+        }
+
         private void BuildEye(float openAmount)
         {
             var count = 32;
