@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LD48", "LD48\LD48.csproj", "{693C5749-842A-444F-91E0-A25FC30A3C47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OculusLeviathan", "LD48\OculusLeviathan.csproj", "{693C5749-842A-444F-91E0-A25FC30A3C47}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Machina", "machina\Machina.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
